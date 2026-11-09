@@ -10,6 +10,11 @@ Album di figurine dei concerti: web app a singolo file (`index.html`), senza dip
 - Album ordinabile (data, A–Z, più visti) e filtrabile (anno, città, concerto, band, con chi, visti/futuri).
 - **Statistiche**: concerti, band uniche, top band, per anno, città, locali, compagni, curiosità.
 
+## Album sfogliabile, skin e pacchetti
+- **📖 Album**: libro con copertina e pagine da 3 figurine a zig-zag (pagina sinistra: alto-sx, centro-dx, basso-sx; pagina destra al contrario). Si sfoglia con i tasti, le frecce, lo swipe o cliccando le pagine, con animazione 3D. **▦ Collezione** è la vista a griglia con tutti i filtri.
+- **Skin** a tema rock/metal (Nero Metal, Inferno, Toxic, Vinile, Neon Synthwave, Black Metal, Rock anni 70): menu nell'Album o in Sync.
+- **📦 Inserimento rapido**: aggiungi tante figurine in blocco (anche più foto insieme o incollando un elenco), scegli quanti pacchetti creare; poi in **Pacchetti** apri il pacchetto, stacca la pellicola e la figurina vola nell'album. Anche la singola nuova figurina passa da un pacchetto (disattivabile in Sync, insieme ad animazioni e suoni).
+
 ## Sync con GitHub
 Pagina **Sync**: owner, repo, branch e token (fine-grained, permesso *Contents: read & write* sul repo).
 - **Push** = un unico commit con `dati/data.json` + nuove foto in `dati/photos/`.

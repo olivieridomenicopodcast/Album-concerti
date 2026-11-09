@@ -162,7 +162,7 @@ main{padding-bottom:60px}
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=2,BUILD_DATE='2026-11-09';
+const BUILD=3,BUILD_DATE='2026-11-09';
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -187,7 +187,7 @@ function toast(m,t=''){const d=document.createElement('div');d.textContent=m;if(
 
 /* ============ stato & persistenza ============ */
 let DB=jload('ac_data',{events:[],stickers:[]});
-let CFG=Object.assign({owner:'olivieridomenicopodcast',repo:'Album-concerti',branch:'main',token:'',lastCommit:'',dirty:false},jload('ac_cfg',{}));
+let CFG=Object.assign({owner:'olivieridomenicopodcast',repo:'Album-concerti',branch:'ccr-d6c8e450-is4c8a',token:'',lastCommit:'',dirty:false},jload('ac_cfg',{}));
 const F=Object.assign({q:'',sort:'date-desc',status:'',year:'',city:'',event:'',band:'',comp:'',view:'grid'},jload('ac_filters',{}));
 const saveCfg=()=>jsave('ac_cfg',CFG);
 function touch(){DB.updatedAt=new Date().toISOString();jsave('ac_data',DB);CFG.dirty=true;saveCfg();refreshDirty()}

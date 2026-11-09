@@ -349,7 +349,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=6,BUILD_DATE='2026-11-09';
+const BUILD=7,BUILD_DATE='2026-11-09';
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -457,7 +457,7 @@ async function resizeImage(file,max=1100){
 /* ============ dati derivati ============ */
 function items(){
   const evm=new Map(DB.events.map(e=>[e.id,e]));const t=todayISO();
-  const arr=DB.stickers.filter(s=>!s.pending).map(st=>{const ev=evm.get(st.eventId)||{id:'',name:'(senza concerto)',date:'',companions:[]};return{st,ev,key:norm(st.band),future:!!ev.date&&ev.date>t}});
+  const arr=DB.stickers.filter(s=>!s.pending).map(st=>{const ev=evm.get(st.eventId)||{id:'',name:'(senza concerto)',date:'',companions:[]};return{st,ev,key:norm(st.band),future:false}});
   [...arr].sort((a,b)=>(a.ev.date||'').localeCompare(b.ev.date||'')||a.st.id.localeCompare(b.st.id)).forEach((x,i)=>x.n=i+1);
   const seen=new Map();arr.forEach(x=>{if(!x.future)seen.set(x.key,(seen.get(x.key)||0)+1)});
   arr.forEach(x=>x.seen=seen.get(x.key)||0);
@@ -631,8 +631,6 @@ function eventForm(id){
 function applyFilters(arr,sortKey){
   const q=norm(F.q);
   let r=arr.filter(x=>{
-    if(F.status==='seen'&&x.future)return false;
-    if(F.status==='future'&&!x.future)return false;
     if(F.year&&yearOf(x.ev)!==F.year)return false;
     if(F.city&&x.ev.city!==F.city)return false;
     if(F.event&&x.ev.id!==F.event)return false;
@@ -661,7 +659,6 @@ function filterBar(mode){
       :`<div class="seg" id="fview"><button data-v="grid">▦ Figurine</button><button data-v="list">☰ Lista</button></div>`}
   </div>
   <div class="toolbar">
-    <select id="fstatus"><option value="">Visti + futuri</option><option value="seen">Solo visti</option><option value="future">Solo prossimi</option></select>
     <select id="fyear">${opts(years,F.year,'Anno')}</select>
     <select id="fcity">${opts(cities,F.city,'Città')}</select>
     <select id="fevent">${opts(evs,F.event,'Concerto / festival')}</select>
@@ -672,12 +669,12 @@ function filterBar(mode){
 }
 function bindFilterBar(mode,upd,rerender){
   const sk=mode==='book'?'bsort':'sort';
-  $('#fsort').value=F[sk];$('#fstatus').value=F.status;
+  $('#fsort').value=F[sk];
   const bind=(id,k)=>$(id).oninput=e=>{F[k]=e.target.value;jsave('ac_filters',F);upd()};
-  bind('#fq','q');bind('#fsort',sk);bind('#fstatus','status');bind('#fyear','year');bind('#fcity','city');bind('#fevent','event');bind('#fband','band');bind('#fcomp','comp');
+  bind('#fq','q');bind('#fsort',sk);bind('#fyear','year');bind('#fcity','city');bind('#fevent','event');bind('#fband','band');bind('#fcomp','comp');
   if(mode==='book')$('#fskin').onchange=e=>{PREF.skin=e.target.value;savePref();applySkin();renderBook()};
   else $$('#fview button').forEach(b=>b.onclick=()=>{F.view=b.dataset.v;jsave('ac_filters',F);upd()});
-  $('#freset').onclick=()=>{Object.assign(F,{q:'',status:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);rerender()};
+  $('#freset').onclick=()=>{Object.assign(F,{q:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);rerender()};
 }
 
 /* ============ vista: collezione (griglia) ============ */
@@ -730,7 +727,7 @@ function pageHTML(pg,side){
   if(!pg)return `<div class="pg ${side} ghostpage"></div>`;
   const nI=B.list.length,nE=new Set(B.list.map(x=>x.ev.id)).size,ico=SKIN_ICON[PREF.skin]||'🤘';
   if(pg.type==='cover')return `<div class="pg R cover" data-cover><div class="cv"><div class="cv-top">★ ★ ★</div><h2>I MIEI<br>CONCERTI</h2><div class="cv-ico">${ico}</div><p>${nI} ${plural(nI,'figurina','figurine')} · ${nE} ${plural(nE,'concerto','concerti')}</p><em class="cv-hint">tocca per aprire</em></div></div>`;
-  if(pg.type==='back')return `<div class="pg L cover back"><div class="cv"><h2>FINE?</h2><div class="cv-ico">${ico}</div><p>Il prossimo concerto<br>è già in programma?</p></div></div>`;
+  if(pg.type==='back')return `<div class="pg L cover back"><div class="cv"><h2>FINE?</h2><div class="cv-ico">${ico}</div><p>Il prossimo concerto<br>lo aggiungi dopo averci fatto un salto!</p></div></div>`;
   const left=pg.idx%2===1,al=left?['left','right','left']:['right','left','right'];
   return `<div class="pg ${left?'L':'R'}"><div class="slots">${[0,1,2].map(j=>slotHTML(pg.items[j],pg.base+j+1,al[j])).join('')}</div><div class="pnum">— ${pg.idx} —</div></div>`;
 }
@@ -831,7 +828,7 @@ function renderEvent(id){
   if(!ev){$('#view').innerHTML='<div class="empty"><h2>Concerto non trovato</h2><a href="#/album">← Album</a></div>';return}
   const lineup=evLineup(id);const fut=ev.date>todayISO();
   $('#view').innerHTML=`<a class="back" href="#/album">← Album</a>
-  <div class="hero"><div><small style="color:var(--mut)">${fut?'🎟️ PROSSIMAMENTE':'✅ ci sono stato'}</small><h1>${esc(ev.name)}</h1></div><span class="sp"></span>
+  <div class="hero"><div><small style="color:var(--mut)">✅ ci sono stato</small><h1>${esc(ev.name)}</h1></div><span class="sp"></span>
     <button class="btn" id="eEdit">Modifica</button><button class="btn pri" id="eAdd">＋ Aggiungi band</button></div>
   <div class="kv"><span>📅 <b>${esc(evDate(ev))}</b></span>${place(ev)?`<span>📍 <b>${esc(place(ev))}</b></span>`:''}<span>🎤 <b>${lineup.length}</b> ${plural(lineup.length,'band','band')}</span></div>
   <div class="panel"><h2>Band della serata</h2>${lineup.length?`<div class="mini">${lineup.map(cardHTML).join('')}</div>`:'<span style="color:var(--mut)">Ancora nessuna band: aggiungine una!</span>'}</div>
@@ -852,7 +849,6 @@ function renderBand(key){
   <div class="hero"><h1>${esc(name)}</h1><span class="sp"></span><button class="btn" id="bRen">Rinomina band</button><button class="btn pri" id="bAdd2">＋ Nuovo concerto di ${esc(name)}</button></div>
   <div class="tiles">
     <div class="tile"><b>${seen.length}</b><span>${plural(seen.length,'volta vista','volte visti')} dal vivo</span></div>
-    <div class="tile"><b>${fut.length}</b><span>${plural(fut.length,'concerto in arrivo','concerti in arrivo')}</span></div>
     <div class="tile"><b>${cities.length}</b><span>${plural(cities.length,'città','città diverse')}</span></div>
     ${asc.length?`<div class="tile"><b style="font-size:20px">${esc(fmt(asc[0].ev.date))}</b><span>prima volta</span></div>
     <div class="tile"><b style="font-size:20px">${esc(fmt(asc[asc.length-1].ev.date))}</b><span>ultima volta</span></div>`:''}
@@ -875,7 +871,7 @@ function bars(rows,link){
 }
 function renderStats(){
   const all=items(),t=todayISO();
-  const LE=liveEvents(),pastEv=LE.filter(e=>e.date&&e.date<=t),futEv=LE.filter(e=>e.date>t);
+  const LE=liveEvents(),pastEv=LE.filter(e=>e.date),futEv=[];
   const past=all.filter(x=>!x.future);
   if(!LE.length){$('#view').innerHTML='<div class="empty"><h2>Nessuna statistica, per ora 📊</h2><p>Aggiungi qualche concerto all\'album.</p></div>';return}
   const names=new Map();past.forEach(x=>names.set(x.key,x.st.band));
@@ -910,7 +906,6 @@ function renderStats(){
     ${tile(pastEv.length,'concerti / festival visti')}
     ${tile(perBand.size,'band uniche viste')}
     ${tile(past.length,'esibizioni viste in totale')}
-    ${tile(futEv.length,'concerti in programma')}
     ${tile(perCity.size,'città')}
     ${tile(perVenue.size,'locali diversi')}
     ${tile(compMap.size,'compagni di concerto')}
@@ -926,7 +921,6 @@ function renderStats(){
     <div class="panel"><h2>Giorno della settimana</h2>${bars(topN(perDow,7).map(([l,v])=>({l,v})))}</div>
   </div>
   <div class="panel"><h2>Curiosità</h2><ul class="fun">
-    ${next?li(`🎟️ Prossimo concerto: <b>${esc(next.name)}</b> tra <b>${dd(next.date)}</b> ${plural(dd(next.date),'giorno','giorni')} (${esc(fmt(next.date))})`):''}
     ${last?li(`⏱️ Ultimo concerto: <b>${esc(fmt(last))}</b> — sono passati <b>${-dd(last)}</b> giorni`):''}
     ${dates.length?li(`🥇 Primo concerto registrato: <b>${esc(fmt(dates[0]))}</b>`):''}
     ${bestYear?li(`🏆 Anno record: <b>${bestYear[0]}</b> con <b>${bestYear[1]}</b> concerti`):''}
@@ -935,7 +929,6 @@ function renderStats(){
     ${perBand.size?li(`🔁 Band viste una sola volta: <b>${once}</b> · fedelissime (3+ volte): <b>${loyal}</b>`):''}
     ${roamer&&roamer[1].size>1?li(`🧳 Band inseguita in più città: <b>${esc(names.get(roamer[0]))}</b> in <b>${roamer[1].size}</b> città`):''}
     ${gap.d?li(`🌵 Digiuno più lungo: <b>${gap.d}</b> giorni (da ${esc(fmt(gap.a))} a ${esc(fmt(gap.b))})`):''}
-    ${perBand.size?li(`💿 Figurine nell'album: <b>${all.length}</b>, di cui <b>${all.filter(x=>x.future).length}</b> ancora da conquistare`):''}
   </ul></div>`;
   countUp($('#view'));
 }
@@ -1083,7 +1076,7 @@ const evOf=st=>DB.events.find(e=>e.id===st.eventId)||{name:'?',date:''};
 function mkItem(st){
   const ev=evOf(st),t=todayISO(),key=norm(st.band),others=DB.stickers.filter(s=>!s.pending&&norm(s.band)===key);
   const seen=others.filter(s=>{const e=evOf(s);return e.date&&e.date<=t}).length;
-  return{st,ev,key,future:!!ev.date&&ev.date>t,seen,isNew:!others.length};
+  return{st,ev,key,future:false,seen,isNew:!others.length};
 }
 function packHTML(id,n,i){
   return `<div class="packw" data-pack="${id}" style="--i:${i}"><div class="pack3"><div class="pk-top"></div><div class="pk-main"><span class="pk-star">✦</span><div class="pk-ico">${SKIN_ICON[PREF.skin]||'🤘'}</div><b>${esc(SKINS[PREF.skin].n.toUpperCase())}</b><small>PACK CONCERTI</small><em>${n} ${plural(n,'figurina','figurine')}</em></div><div class="pk-btm"></div><span class="pk-shine"></span></div><button class="btn sm pri">Apri</button></div>`;
@@ -1106,7 +1099,7 @@ async function openPack(packId){
   const order=DB.stickers.filter(s=>s.pending&&s.pack===packId).sort((a,b)=>(evOf(a).date||'').localeCompare(evOf(b).date||''));
   if(!order.length)return true;
   closeAll();
-  Object.assign(F,{q:'',status:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);
+  Object.assign(F,{q:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);
   if(CUR!=='album'){history.replaceState(null,'','#/album');route(true)}
   const pasteNow=sts=>{sts.forEach(s=>{s.pending=false;delete s.pack});touch()};
   if(!PREF.anim){pasteNow(order);toast(`${order.length} figurine incollate`,'ok');route();return true}

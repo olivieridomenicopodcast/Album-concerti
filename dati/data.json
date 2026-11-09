@@ -1,0 +1,114 @@
+{
+ "events": [
+  {
+   "id": "mw9b4nv878nnw",
+   "name": "World Magnetic Tour",
+   "date": "2009-06-22",
+   "endDate": "",
+   "venue": "Forum Assago",
+   "city": "Milano",
+   "companions": [],
+   "notes": "Primissimo concerto Metal"
+  },
+  {
+   "id": "mw9c63uhwppr3",
+   "name": "Nightmare Tour",
+   "date": "2010-10-21",
+   "endDate": "",
+   "venue": "Palasharp",
+   "city": "Milano",
+   "companions": [
+    "Berto",
+    "Mancio",
+    "Pascu",
+    "Enrico Zicari"
+   ],
+   "notes": "Concerto bellissimo in 12 persone. La prima nota di Nightmare è iniziata alle 21:00"
+  },
+  {
+   "id": "mw9csr07py80c",
+   "name": "Memorabilia Festival",
+   "date": "2026-07-04",
+   "endDate": "",
+   "venue": "Centro Fonti San Lorenzo",
+   "city": "Porto Recanati",
+   "companions": [
+    "Erika"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "mw9e41selml3d",
+   "name": "Tour 2013",
+   "date": "2013-01-13",
+   "endDate": "",
+   "venue": "Tempo Rock",
+   "city": "Gualtieri",
+   "companions": [
+    "Rodo"
+   ],
+   "notes": ""
+  }
+ ],
+ "stickers": [
+  {
+   "id": "mw9b4nwkl9xrx",
+   "band": "Metallica",
+   "eventId": "mw9b4nv878nnw",
+   "photo": "mw9b4nv9bpq0h"
+  },
+  {
+   "id": "mw9b5uink9ip6",
+   "band": "Lamb Of God",
+   "eventId": "mw9b4nv878nnw",
+   "photo": "mw9b5ui6z8ubn",
+   "pending": false
+  },
+  {
+   "id": "mw9bbgorqt7i6",
+   "band": "Mastodon",
+   "eventId": "mw9b4nv878nnw",
+   "photo": "mw9bbgocrzqbn"
+  },
+  {
+   "id": "mw9c63vxtpfpw",
+   "band": "Avenged Sevenfold",
+   "eventId": "mw9c63uhwppr3",
+   "photo": "mw9c63uirkrp9",
+   "pending": false
+  },
+  {
+   "id": "mw9csr1y4iij2",
+   "band": "Rancore",
+   "eventId": "mw9csr07py80c",
+   "photo": "mw9csr07rb8oc"
+  },
+  {
+   "id": "mw9ctb5m80h5c",
+   "band": "Miglio",
+   "eventId": "mw9csr07py80c",
+   "photo": "mw9ctb5e2uc7d"
+  },
+  {
+   "id": "mw9dy6r8m1av9",
+   "band": "Ferretti",
+   "eventId": "mw9csr07py80c",
+   "photo": "mw9dy6pd8j6vf",
+   "pending": false
+  },
+  {
+   "id": "mw9e41ssmfimb",
+   "band": "Enter Shikari",
+   "eventId": "mw9e41selml3d",
+   "photo": "mw9e41sfoe5fp"
+  },
+  {
+   "id": "mw9e4zambljw9",
+   "band": "Cancer Bats",
+   "eventId": "mw9e41selml3d",
+   "photo": "mw9e4zabonjyl",
+   "pending": false
+  }
+ ],
+ "updatedAt": "2026-11-09T15:03:08.296Z"
+}

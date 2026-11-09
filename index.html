@@ -180,6 +180,7 @@ html[data-skin=black] .scnt{background:#111;color:#fff}
 .fx{position:fixed;width:7px;height:7px;border-radius:50%;z-index:90;pointer-events:none}
 nav{overflow-x:auto;max-width:100%}nav a{white-space:nowrap}
 .hint{color:var(--mut)}
+.cap .edev{font-size:.85em;cursor:pointer;opacity:.55}.cap .edev:hover{opacity:1}
 
 /* ===== libro ===== */
 .bookwrap{display:flex;justify-content:center;padding:8px 0 4px;overflow:hidden}
@@ -348,7 +349,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=5,BUILD_DATE='2026-11-09';
+const BUILD=6,BUILD_DATE='2026-11-09';
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -515,12 +516,14 @@ function lightbox(sid){
      <div class="actions">
        <button class="btn pri" data-a="open">Apri</button>
        <button class="btn" data-a="band">Pagina band</button>
-       <button class="btn" data-a="edit">Modifica</button>
+       <button class="btn" data-a="edit">Modifica figurina</button>
+       <button class="btn" data-a="editev">✏️ Modifica concerto</button>
      </div></div>`,'lb');
   el.onclick=e=>{const a=e.target.dataset?.a;if(!a)return;
     if(a==='open'){closeAll();location.hash='#/event/'+ev.id}
     if(a==='band'){closeAll();location.hash='#/band/'+encodeURIComponent(it.key)}
-    if(a==='edit'){closeAll();stickerForm(st.id)}};
+    if(a==='edit'){closeAll();stickerForm(st.id)}
+    if(a==='editev'){closeAll();eventForm(ev.id)}};
 }
 
 /* ============ form figurina / concerto ============ */
@@ -720,7 +723,7 @@ function slotHTML(it,num,align){
       <div class="ini">${esc(initials(st.band))}</div>${st.photo?`<img data-photo="${esc(st.photo)}" alt="${esc(st.band)}">`:''}
       <span class="snum">#${pad(num)}</span>${it.seen?`<span class="scnt">${it.seen}×</span>`:''}${it.future?'<span class="sfut">PROSSIMAMENTE</span>':''}
     </div>
-    <div class="cap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(ev))}</span>${place(ev)?`<span>📍 ${esc(place(ev))}</span>`:''}<a class="tg" href="#/event/${esc(ev.id)}">🏷 ${esc(ev.name)}</a></div>
+    <div class="cap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(ev))}</span>${place(ev)?`<span>📍 ${esc(place(ev))}</span>`:''}<a class="tg" href="#/event/${esc(ev.id)}">🏷 ${esc(ev.name)}</a><a class="edev" data-editev="${esc(ev.id)}" title="Modifica concerto">✏️ modifica</a></div>
   </div>`;
 }
 function pageHTML(pg,side){
@@ -771,6 +774,7 @@ function updateBookNav(){
 function bindBook(){
   const bk=$('#bk');
   $$('[data-open]',bk).forEach(e=>e.onclick=()=>lightbox(e.dataset.open));
+  $$('[data-editev]',bk).forEach(e=>e.onclick=()=>eventForm(e.dataset.editev));
   $$('.pg',bk).forEach(p=>p.addEventListener('click',e=>{
     if(e.target.closest('.sticker,a'))return;
     if(p.classList.contains('cover')&&!p.classList.contains('back')){flip(1);return}

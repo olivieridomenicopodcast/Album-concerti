@@ -180,6 +180,28 @@ html[data-skin=black] .scnt{background:#111;color:#fff}
 .fx{position:fixed;width:7px;height:7px;border-radius:50%;z-index:90;pointer-events:none}
 nav{overflow-x:auto;max-width:100%}nav a{white-space:nowrap}
 .hint{color:var(--mut)}
+.rnd-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0 18px}
+.rbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 12px;border-radius:16px;border:2px solid var(--line);background:linear-gradient(160deg,var(--card),var(--bg2));cursor:pointer;text-align:center;transition:transform .2s,border-color .2s,box-shadow .2s}
+.rbtn i{font-style:normal;font-size:42px;transition:transform .4s}
+.rbtn b{font-size:17px}.rbtn span{color:var(--mut);font-size:13px}
+.rbtn:hover:not(:disabled){transform:translateY(-4px);border-color:var(--a);box-shadow:0 8px 24px color-mix(in srgb,var(--a) 40%,transparent)}
+.rbtn:hover:not(:disabled) i{transform:rotate(360deg) scale(1.2)}
+.rbtn:disabled{opacity:.5;cursor:wait}
+.reel{height:96px;display:flex;align-items:center;justify-content:center;border:2px solid var(--a);border-radius:16px;background:var(--bg2);box-shadow:inset 0 0 40px color-mix(in srgb,var(--a) 35%,transparent);overflow:hidden;padding:0 14px;text-align:center}
+.reel span{font:900 clamp(22px,5vw,38px)/1.1 Impact,system-ui,sans-serif;text-transform:uppercase;letter-spacing:1px}
+.reel span.tk{animation:tickIn .09s both}
+@keyframes tickIn{from{transform:translateY(-70%);opacity:.2}to{transform:none;opacity:1}}
+.reel.lock{animation:pulse .6s}.reel.lock span{color:var(--b);text-shadow:0 0 20px var(--a)}
+.rres{animation:popIn .5s both;margin-top:4px}
+.rhead small{color:var(--mut);letter-spacing:2px;text-transform:uppercase;font-size:12px}
+.rhead h2{font:400 clamp(28px,6vw,48px)/1 Impact,system-ui,sans-serif;text-transform:uppercase;letter-spacing:1px;margin:2px 0 6px;background:linear-gradient(90deg,var(--b),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rgrid .card{animation-name:dealCard;animation-delay:calc(var(--i,0)*170ms + .2s)}
+@keyframes dealCard{from{opacity:0;transform:translateY(-120px) scale(.4) rotate(-14deg)}to{opacity:1;transform:none}}
+.rband{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;margin-top:10px}
+.rbig{width:min(72vw,250px)}
+.rbig .card{animation-name:dealCard;animation-delay:.15s}
+.rside{flex:1;min-width:240px}.rside h3{font-size:22px}
+.ract{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 8px}
 .cap .edev{font-size:.85em;cursor:pointer;opacity:.55}.cap .edev:hover{opacity:1}
 
 /* ===== libro ===== */
@@ -332,6 +354,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
     <a href="#/album" data-n="album">📖 Album</a>
     <a href="#/collezione" data-n="collezione">▦ Collezione</a>
     <a href="#/packs" data-n="packs">📦 Pacchetti<span id="pkBadge" hidden></span></a>
+    <a href="#/random" data-n="random">🎲 Scopri</a>
     <a href="#/stats" data-n="stats">Statistiche</a>
     <a href="#/sync" data-n="sync">Sync</a>
   </nav>
@@ -349,7 +372,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=7,BUILD_DATE='2026-11-09';
+const BUILD=8,BUILD_DATE='2026-11-09';
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -1043,6 +1066,83 @@ function renderSync(){
   $('#cSave').onclick=save;$('#cTest').onclick=()=>{save();doTest()};$('#sPull').onclick=doPull;$('#sPush').onclick=doPush;
 }
 
+/* ============ scopri: random ============ */
+const RND={busy:false,last:{}};
+SFX.tick=()=>tone(1000,900,.03,.05,'square');
+function renderRandom(){
+  $('#view').innerHTML=`<h1 style="margin-bottom:4px">🎲 Scopri</h1>
+  <p style="color:var(--mut);margin:0 0 6px">Lascia decidere al caso: ripesca un pezzo della tua storia di concerti.</p>
+  <div class="rnd-btns">
+    <button class="rbtn" data-m="event"><i>🎪</i><b>Concerto a caso</b><span>Tutte le figurine di quella serata</span></button>
+    <button class="rbtn" data-m="band"><i>🎤</i><b>Band a caso</b><span>Una band, in uno dei suoi concerti</span></button>
+    <button class="rbtn" data-m="sticker"><i>🃏</i><b>Figurina a caso</b><span>Una sola, pescata dal mazzo</span></button>
+  </div><div id="rstage"></div>`;
+  $$('.rbtn').forEach(b=>b.onclick=()=>rollRandom(b.dataset.m));
+}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+async function rollRandom(mode,fixed){
+  if(RND.busy)return;
+  const all=items();if(!all.length){toast('Aggiungi prima qualche concerto!','err');return}
+  const stage=$('#rstage');if(!stage)return;
+  let pool,label;
+  if(mode==='event'){const ids=new Set(all.map(x=>x.ev.id));pool=DB.events.filter(e=>ids.has(e.id));label=e=>e.name}
+  else if(mode==='band'){const m=new Map();all.forEach(x=>m.set(x.key,x.st.band));pool=[...m];label=b=>b[1]}
+  else{pool=all;label=x=>x.st.band}
+  const id=o=>mode==='event'?o.id:mode==='band'?o[0]:o.st.id;
+  let chosen=fixed;
+  if(!chosen){const cand=pool.length>1?pool.filter(o=>id(o)!==RND.last[mode]):pool;chosen=pick(cand)}
+  RND.last[mode]=id(chosen);
+  if(PREF.anim&&!fixed){
+    RND.busy=true;$$('.rbtn').forEach(b=>b.disabled=true);
+    stage.innerHTML=`<div class="reel"><span id="reelTxt">…</span></div>`;
+    const txt=$('#reelTxt'),reel=$('.reel');let d=55;
+    for(let i=0;i<20;i++){txt.textContent=label(pick(pool));txt.classList.remove('tk');void txt.offsetWidth;txt.classList.add('tk');sfx('tick');await sleep(d);d*=1.13}
+    txt.textContent=label(chosen);reel.classList.add('lock');sfx('chime');await sleep(650);
+    RND.busy=false;$$('.rbtn').forEach(b=>b.disabled=false);
+  }
+  if(mode==='event')showRandomEvent(chosen,stage);
+  else if(mode==='band')showRandomBand(chosen[0],stage);
+  else showRandomSticker(chosen,stage,'🃏 La figurina fortunata','sticker');
+  const r=stage.getBoundingClientRect();burstFX(innerWidth/2,Math.min(Math.max(r.top+60,120),innerHeight-120),24,true);
+  stage.scrollIntoView({block:'start',behavior:PREF.anim?'smooth':'instant'});
+}
+function randomActions(extra=''){return `<div class="ract">${extra}<button class="btn pri" id="rAgain">🎲 Un altro!</button></div>`}
+function showRandomEvent(e,stage){
+  const lineup=evLineup(e.id);
+  stage.innerHTML=`<div class="rres"><div class="rhead"><small>🎪 Il concerto fortunato</small><h2>${esc(e.name)}</h2>
+    <div class="kv"><span>📅 <b>${esc(evDate(e))}</b></span>${place(e)?`<span>📍 <b>${esc(place(e))}</b></span>`:''}<span>🎤 <b>${lineup.length}</b> ${plural(lineup.length,'band','band')}</span></div>
+    ${e.companions?.length?e.companions.map(c=>`<span class="chip">👥 ${esc(c)}</span>`).join(''):''}</div>
+    <div class="grid rgrid">${lineup.map(cardHTML).join('')}</div>
+    ${e.notes?`<div class="panel" style="margin-top:14px;white-space:pre-wrap">${esc(e.notes)}</div>`:''}
+    ${randomActions(`<button class="btn" id="rOpen">Apri scheda concerto</button>`)}</div>`;
+  $$('.rgrid .card',stage).forEach((c,i)=>c.style.setProperty('--i',Math.min(i,12)));
+  $('#rOpen',stage).onclick=()=>go('#/event/'+e.id);
+  $('#rAgain',stage).onclick=()=>rollRandom('event');
+  bindCards(stage);hydrate(stage);
+}
+function showRandomBand(key,stage){
+  const its=items().filter(x=>x.key===key);
+  showRandomSticker(pick(its),stage,'🎤 La band fortunata','band',its);
+}
+function showRandomSticker(it,stage,title,mode,its){
+  const {st,ev}=it,others=evLineup(ev.id).filter(x=>x.st.id!==st.id);
+  const asc=(its||[]).map(x=>x.ev.date).sort();
+  stage.innerHTML=`<div class="rres"><div class="rhead"><small>${title}</small><h2>${esc(st.band)}</h2>
+    <div class="kv"><span>👁 visti <b>${it.seen}</b> ${plural(it.seen,'volta','volte')}</span>${asc.length>1?`<span>dal <b>${esc(fmt(asc[0]))}</b> al <b>${esc(fmt(asc[asc.length-1]))}</b></span>`:''}</div></div>
+    <div class="rband"><div class="rbig">${cardHTML(it)}</div>
+      <div class="rside"><small style="color:var(--mut)">Quella sera</small><h3>${esc(ev.name)}</h3>
+        <div class="kv" style="margin:4px 0 8px"><span>📅 <b>${esc(evDate(ev))}</b></span>${place(ev)?`<span>📍 <b>${esc(place(ev))}</b></span>`:''}</div>
+        ${ev.companions?.length?`<div>${ev.companions.map(c=>`<span class="chip">👥 ${esc(c)}</span>`).join('')}</div>`:''}
+        ${others.length?`<small style="color:var(--mut);display:block;margin:10px 0 6px">Sul palco anche…</small><div class="mini">${others.map(cardHTML).join('')}</div>`:'<small style="color:var(--mut)">Nessun\'altra band registrata per questa serata.</small>'}
+      </div></div>
+    ${randomActions(`${mode==='band'&&its.length>1?`<button class="btn" id="rSame">🔀 Altro concerto di ${esc(st.band)}</button>`:''}<button class="btn" id="rOpen">Apri concerto</button><button class="btn" id="rBand">Pagina band</button>`)}</div>`;
+  $('#rOpen',stage).onclick=()=>go('#/event/'+ev.id);
+  $('#rBand',stage).onclick=()=>go('#/band/'+encodeURIComponent(it.key));
+  $('#rAgain',stage).onclick=()=>rollRandom(mode);
+  if($('#rSame',stage))$('#rSame',stage).onclick=()=>{const o=its.filter(x=>x.st.id!==st.id);showRandomSticker(pick(o),stage,title,mode,its)};
+  bindCards(stage);hydrate(stage);
+}
+
 /* ============ router ============ */
 let CUR='album';
 function route(top){
@@ -1052,7 +1152,7 @@ function route(top){
   const a=arg?decodeURIComponent(arg):'';
   const v=$('#view');v.style.animation='none';void v.offsetHeight;v.style.animation='';
   if(page==='stats')renderStats();else if(page==='sync')renderSync();else if(page==='event')renderEvent(a);else if(page==='band')renderBand(a);
-  else if(page==='collezione')renderCollection();else if(page==='packs')renderPacks();else renderBookView();
+  else if(page==='collezione')renderCollection();else if(page==='random')renderRandom();else if(page==='packs')renderPacks();else renderBookView();
   updatePackBadge();
   if(top)window.scrollTo(0,0);
 }

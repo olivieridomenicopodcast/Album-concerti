@@ -15,3 +15,6 @@ Pagina **Sync**: owner, repo, branch e token (fine-grained, permesso *Contents: 
 - **Push** = un unico commit con `dati/data.json` + nuove foto in `dati/photos/`.
 - **Pull** = scarica dati e foto mancanti.
 - Il token resta solo nel `localStorage` del browser. Se il repo è cambiato da un altro dispositivo, il Push chiede conferma prima di sovrascrivere.
+
+## Build e aggiornamenti
+In basso a sinistra c'è il numero di build. **↻ Aggiornamenti** controlla se online c'è una build più recente (diventa "Aggiorna alla build N" e ricarica la pagina). Prima di ogni commit si lancia `./bump-build.sh`.

@@ -135,6 +135,10 @@ main{max-width:1200px;margin:0 auto;padding:16px}
 #toast .err{border-color:var(--bad);color:#ffb4b4}
 #toast .ok{border-color:var(--ok)}
 @media(max-width:600px){.top{padding:8px 10px}.grid{grid-template-columns:repeat(2,1fr);gap:12px}.grid.list{grid-template-columns:1fr}.toolbar select{max-width:none;flex:1 1 45%}}
+#build{position:fixed;left:10px;bottom:10px;z-index:30;display:flex;gap:6px;align-items:center;background:#000c;border:1px solid var(--line);border-radius:99px;padding:3px 4px 3px 11px;font-size:12px;color:var(--mut)}
+#build button{border:0;background:var(--card);color:var(--tx);border-radius:99px;padding:3px 10px;cursor:pointer;font-size:12px}
+#build button.new{background:var(--a);color:#fff;font-weight:700}
+main{padding-bottom:60px}
 </style>
 </head>
 <body>
@@ -153,9 +157,13 @@ main{max-width:1200px;margin:0 auto;padding:16px}
 <main id="view"></main>
 <div id="modal-root"></div>
 <div id="toast"></div>
+<div id="build"><span id="bLabel"></span><button id="bCheck" title="Cerca aggiornamenti">↻ Aggiornamenti</button></div>
 
 <script>
 'use strict';
+/* ============ build ============ */
+const BUILD=2,BUILD_DATE='2026-11-09';
+
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -654,6 +662,23 @@ function route(top){
 window.addEventListener("hashchange",()=>{closeAll();route(true)});
 $('#bAdd').onclick=()=>stickerForm();
 $('#bPull').onclick=doPull;$('#bPush').onclick=doPush;
+$('#bLabel').textContent=`build ${BUILD} · ${BUILD_DATE}`;
+let newerBuild=false;
+$('#bCheck').onclick=async()=>{
+  const btn=$('#bCheck');
+  if(newerBuild){location.href=location.pathname+'?v='+Date.now()+location.hash;return}
+  btn.disabled=true;btn.textContent='Controllo…';
+  try{
+    const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const m=(await r.text()).match(/const BUILD=(\d+)/);
+    if(!m)throw new Error('numero di build non trovato');
+    const remote=+m[1];
+    if(remote>BUILD){newerBuild=true;btn.classList.add('new');btn.textContent=`⬆ Aggiorna alla build ${remote}`;toast(`Disponibile la build ${remote}`,'ok')}
+    else{btn.textContent='↻ Aggiornamenti';toast('Sei già all\'ultima build ('+BUILD+')','ok')}
+  }catch(e){btn.textContent='↻ Aggiornamenti';toast('Controllo non riuscito: '+e.message+' (funziona solo se l\'app è pubblicata online)','err')}
+  btn.disabled=false;
+};
 refreshDirty();route();
 if(navigator.storage?.persist)navigator.storage.persist().catch(()=>{});
 </script>

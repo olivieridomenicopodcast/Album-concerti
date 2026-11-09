@@ -48,6 +48,44 @@
     "Rodo"
    ],
    "notes": ""
+  },
+  {
+   "id": "mw9eayazsw8i2",
+   "name": "Tour 2015",
+   "date": "2015-07-29",
+   "endDate": "",
+   "venue": "Rock Planet",
+   "city": "Pinarella di Cervia",
+   "companions": [
+    "Chiara"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "mw9eey8iuise8",
+   "name": "Slam Dunk 2023",
+   "date": "2023-06-03",
+   "endDate": "",
+   "venue": "Bay Arena",
+   "city": "Bellaria Igea Marina",
+   "companions": [
+    "Erika",
+    "Rodo",
+    "Bella"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "mw9eioi0qxxeq",
+   "name": "Tour 2025",
+   "date": "2025-11-02",
+   "endDate": "",
+   "venue": "Alcatraz",
+   "city": "Milano",
+   "companions": [
+    "Erika"
+   ],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -108,7 +146,35 @@
    "eventId": "mw9e41selml3d",
    "photo": "mw9e4zabonjyl",
    "pending": false
+  },
+  {
+   "id": "mw9eayb7h4uga",
+   "band": "Enter Shikari",
+   "eventId": "mw9eayazsw8i2",
+   "photo": "mw9eayb03q6jc",
+   "pending": false
+  },
+  {
+   "id": "mw9eey8u2f7jt",
+   "band": "Enter Shikari",
+   "eventId": "mw9eey8iuise8",
+   "photo": "mw9eey8mgcz4i",
+   "pending": false
+  },
+  {
+   "id": "mw9eioignkmy7",
+   "band": "Enter Shikari",
+   "eventId": "mw9eioi0qxxeq",
+   "photo": "mw9eioi1iqo25",
+   "pending": false
+  },
+  {
+   "id": "mw9ejhcaj7cip",
+   "band": "DeathByRomy",
+   "eventId": "mw9eioi0qxxeq",
+   "photo": "mw9ejhbxf9xoj",
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-09T15:03:08.296Z"
+ "updatedAt": "2026-11-09T15:14:24.921Z"
 }

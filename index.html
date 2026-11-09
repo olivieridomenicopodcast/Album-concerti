@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14111d">
+<title>Album Concerti</title>
+<style>
+:root{
+  --bg:#14111d;--bg2:#1c1829;--card:#221d33;--line:#352e4d;--tx:#f3eefc;--mut:#9c93b8;
+  --a:#ff3d8b;--b:#ffb800;--c:#35e0c6;--ok:#4ade80;--bad:#ff5d5d;--r:14px;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#2a1d4a55,transparent),var(--bg);color:var(--tx);
+  font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+a{color:var(--c);text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;
+  background:#14111dee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.logo{font-weight:900;font-size:19px;letter-spacing:.5px;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent;margin-right:6px}
+nav{display:flex;gap:4px}
+nav a{padding:7px 12px;border-radius:99px;color:var(--mut);font-weight:600}
+nav a.on{background:var(--card);color:var(--tx)}
+.sp{flex:1}
+.btn{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{border-color:var(--mut)}
+.btn.pri{background:linear-gradient(135deg,var(--a),#c026d3);border-color:transparent;color:#fff}
+.btn.dan{color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:wait}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--b);display:none}
+.dirty .dot{display:inline-block}
+main{max-width:1200px;margin:0 auto;padding:16px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.toolbar input,.toolbar select,.f input,.f select,.f textarea{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.toolbar input[type=search]{flex:1 1 200px}
+.toolbar select{max-width:170px}
+.summary{color:var(--mut);margin:4px 0 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:var(--bg2);border:0;padding:8px 12px;cursor:pointer;color:var(--mut)}
+.seg button.on{background:var(--card);color:var(--tx)}
+
+/* figurine */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.card{position:relative;border-radius:16px;padding:3px;background:linear-gradient(135deg,var(--b),var(--a),var(--c),var(--b));
+  box-shadow:0 6px 18px #0007;transition:transform .15s}
+.card:hover{transform:translateY(-3px) rotate(-.6deg)}
+.card>.in{background:var(--card);border-radius:13px;overflow:hidden;height:100%;display:flex;flex-direction:column}
+.ph{position:relative;aspect-ratio:3/4;cursor:zoom-in;overflow:hidden;background:var(--g,#333);display:flex;align-items:center;justify-content:center}
+.ph .ini{font-size:44px;font-weight:900;color:#fff9;text-shadow:0 2px 8px #0006}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s}
+.ph img.ok{opacity:1}
+.num{position:absolute;top:6px;left:6px;background:#000a;border-radius:8px;padding:1px 7px;font-size:12px;font-weight:700}
+.cnt{position:absolute;top:6px;right:6px;background:var(--b);color:#1b1300;border-radius:99px;padding:1px 9px;font-size:13px;font-weight:800}
+.rib{position:absolute;left:-34px;bottom:14px;transform:rotate(-35deg);background:var(--a);color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 40px}
+.card.future .ph img{filter:grayscale(.8) brightness(.8)}
+.card.future>.in{opacity:.92}
+.meta{padding:9px 10px 11px;display:flex;flex-direction:column;gap:2px}
+.meta h3{font-size:16px;line-height:1.15}
+.meta .s{color:var(--mut);font-size:12.5px}
+.tag{display:inline-block;margin-top:5px;align-self:flex-start;background:#35e0c61f;color:var(--c);border:1px solid #35e0c655;border-radius:99px;padding:1px 9px;font-size:12px;font-weight:600;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag:hover{background:#35e0c633}
+.chip{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:2px 11px;margin:2px 4px 2px 0;font-size:13px}
+/* list view */
+.grid.list{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.list .card>.in{flex-direction:row}
+.list .ph{width:120px;flex:none;aspect-ratio:3/4}
+.list .meta{justify-content:center;min-width:0}
+.list .meta h3{font-size:18px}
+.empty{text-align:center;padding:60px 20px;color:var(--mut)}
+.empty h2{color:var(--tx);margin-bottom:6px}
+
+/* pagine */
+.hero{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px}
+.hero h1{font-size:30px;line-height:1.1}
+.kv{display:flex;gap:18px;flex-wrap:wrap;color:var(--mut);margin:6px 0 14px}
+.kv b{color:var(--tx)}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.panel h2{font-size:15px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.mini .card{cursor:pointer}
+.mini .meta h3{font-size:14px}
+.tl{list-style:none;padding:0;margin:0}
+.tl li{padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.tl li:last-child{border:0}
+.back{display:inline-block;margin-bottom:10px;color:var(--mut)}
+
+/* statistiche */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:14px}
+.tile{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.tile b{display:block;font-size:32px;line-height:1;background:linear-gradient(90deg,var(--b),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tile span{color:var(--mut);font-size:13px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+.bar-row{display:grid;grid-template-columns:minmax(80px,38%) 1fr 34px;gap:8px;align-items:center;margin:5px 0;font-size:14px}
+.bar-row .bl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt{background:var(--bg);border-radius:6px;height:14px;overflow:hidden}
+.bt i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));border-radius:6px}
+.bar-row b{text-align:right}
+.cols{display:flex;align-items:flex-end;gap:6px;height:170px;padding-top:10px}
+.cols div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0;font-size:12px}
+.cols i{display:block;width:100%;max-width:46px;background:linear-gradient(180deg,var(--b),var(--a));border-radius:6px 6px 0 0;min-height:2px}
+.cols em{font-style:normal;color:var(--mut);margin-top:4px}
+.fun{list-style:none;padding:0;margin:0}
+.fun li{padding:7px 0;border-bottom:1px solid var(--line)}
+.fun li:last-child{border:0}
+.fun b{color:var(--b)}
+
+/* modali */
+.backdrop{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px}
+.modal{background:var(--bg2);border:1px solid var(--line);border-radius:18px;width:100%;max-width:520px;padding:18px;position:relative;margin:auto}
+.modal.lb{max-width:880px;padding:0;overflow:hidden;display:grid;grid-template-columns:1.2fr 1fr}
+.lb-img{position:relative;background:#000;min-height:320px;display:flex;align-items:center;justify-content:center}
+.lb-img img{width:100%;height:100%;max-height:82vh;object-fit:contain;opacity:0;transition:opacity .3s;position:absolute;inset:0}
+.lb-img img.ok{opacity:1}
+.lb-img .ini{font-size:90px;font-weight:900;color:#fff8}
+.lb-img{background:var(--g,#000)}
+.lb-info{padding:22px 20px;display:flex;flex-direction:column;gap:6px}
+.lb-info h2{font-size:26px}
+.lb-info .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.x{position:absolute;top:8px;right:8px;z-index:3;background:#000a;border:0;border-radius:50%;width:32px;height:32px;cursor:pointer;color:#fff;font-size:16px}
+@media(max-width:700px){.modal.lb{grid-template-columns:1fr}.lb-img{min-height:60vh}}
+.f label{display:block;font-size:13px;color:var(--mut);margin:10px 0 3px}
+.f input,.f select,.f textarea{width:100%}
+.f .r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.f .prev{width:96px;aspect-ratio:3/4;border-radius:10px;border:1px dashed var(--line);object-fit:cover;background:var(--bg)}
+.f .newev{border:1px solid var(--line);border-radius:12px;padding:0 12px 12px;margin-top:10px;background:var(--bg)}
+.f .chk{display:flex;gap:8px;align-items:center;color:var(--tx);margin-top:12px}
+.f .chk input{width:auto}
+.log{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font:12.5px/1.5 ui-monospace,monospace;max-height:220px;overflow:auto;white-space:pre-wrap;color:var(--mut)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:99;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+#toast div{background:#000e;border:1px solid var(--line);padding:9px 16px;border-radius:12px;max-width:92vw}
+#toast .err{border-color:var(--bad);color:#ffb4b4}
+#toast .ok{border-color:var(--ok)}
+@media(max-width:600px){.top{padding:8px 10px}.grid{grid-template-columns:repeat(2,1fr);gap:12px}.grid.list{grid-template-columns:1fr}.toolbar select{max-width:none;flex:1 1 45%}}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <span class="logo">🎸 ALBUM CONCERTI</span>
+  <nav id="nav">
+    <a href="#/album" data-n="album">Album</a>
+    <a href="#/stats" data-n="stats">Statistiche</a>
+    <a href="#/sync" data-n="sync">Sync</a>
+  </nav>
+  <span class="sp"></span>
+  <button class="btn sm" id="bPull" title="Scarica da GitHub">⬇ Pull</button>
+  <button class="btn sm" id="bPush" title="Invia su GitHub"><span class="dot"></span>⬆ Push</button>
+  <button class="btn pri sm" id="bAdd">＋ Figurina</button>
+</header>
+<main id="view"></main>
+<div id="modal-root"></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ============ utilità ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+const uniq=a=>[...new Set(a)];
+const pad=n=>String(n).padStart(3,'0');
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'}):'—';
+const evDate=e=>e.endDate&&e.endDate>e.date?`${fmt(e.date)} → ${fmt(e.endDate)}`:fmt(e.date);
+const place=e=>uniq([e.venue,e.city].filter(Boolean)).join(' · ');
+const yearOf=e=>(e.date||'').slice(0,4);
+const jload=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const jsave=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Impossibile salvare in locale: '+e.message,'err')}};
+const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
+const grad=s=>{const h=hue(s);return `linear-gradient(145deg,hsl(${h} 55% 30%),hsl(${(h+50)%360} 60% 18%))`};
+const initials=s=>String(s).split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+const plural=(n,a,b)=>n===1?a:b;
+function toast(m,t=''){const d=document.createElement('div');d.textContent=m;if(t)d.className=t;$('#toast').appendChild(d);setTimeout(()=>d.remove(),t==='err'?6000:2800)}
+
+/* ============ stato & persistenza ============ */
+let DB=jload('ac_data',{events:[],stickers:[]});
+let CFG=Object.assign({owner:'olivieridomenicopodcast',repo:'Album-concerti',branch:'main',token:'',lastCommit:'',dirty:false},jload('ac_cfg',{}));
+const F=Object.assign({q:'',sort:'date-desc',status:'',year:'',city:'',event:'',band:'',comp:'',view:'grid'},jload('ac_filters',{}));
+const saveCfg=()=>jsave('ac_cfg',CFG);
+function touch(){DB.updatedAt=new Date().toISOString();jsave('ac_data',DB);CFG.dirty=true;saveCfg();refreshDirty()}
+function refreshDirty(){$('#top').classList.toggle('dirty',!!CFG.dirty)}
+
+/* ============ foto: IndexedDB ============ */
+const idb=(()=>{let db;
+  const open=()=>db?Promise.resolve(db):new Promise((res,rej)=>{const r=indexedDB.open('album-concerti',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos');r.onsuccess=()=>{db=r.result;res(db)};r.onerror=()=>rej(r.error)});
+  const tx=(mode,fn)=>open().then(d=>new Promise((res,rej)=>{const t=d.transaction('photos',mode);const rq=fn(t.objectStore('photos'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)}));
+  return{get:id=>tx('readonly',s=>s.get(id)),put:(id,b)=>tx('readwrite',s=>s.put(b,id)),del:id=>tx('readwrite',s=>s.delete(id)),keys:()=>tx('readonly',s=>s.getAllKeys())}})();
+const urls=new Map();
+async function photoURL(id){if(urls.has(id))return urls.get(id);const b=await idb.get(id).catch(()=>null);if(!b)return null;const u=URL.createObjectURL(b);urls.set(id,u);return u}
+function hydrate(root=document){$$('img[data-photo]',root).forEach(async img=>{const u=await photoURL(img.dataset.photo);if(u){img.onload=()=>img.classList.add('ok');img.src=u}})}
+async function resizeImage(file,max=1100){
+  let src,w,h;
+  try{src=await createImageBitmap(file,{imageOrientation:'from-image'});w=src.width;h=src.height}
+  catch{src=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('Formato immagine non supportato'));i.src=URL.createObjectURL(file)});w=src.naturalWidth;h=src.naturalHeight}
+  const k=Math.min(1,max/Math.max(w,h));const c=document.createElement('canvas');c.width=Math.round(w*k);c.height=Math.round(h*k);
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+  return new Promise(res=>c.toBlob(res,'image/jpeg',.82));
+}
+
+/* ============ dati derivati ============ */
+function items(){
+  const evm=new Map(DB.events.map(e=>[e.id,e]));const t=todayISO();
+  const arr=DB.stickers.map(st=>{const ev=evm.get(st.eventId)||{id:'',name:'(senza concerto)',date:'',companions:[]};return{st,ev,key:norm(st.band),future:!!ev.date&&ev.date>t}});
+  [...arr].sort((a,b)=>(a.ev.date||'').localeCompare(b.ev.date||'')||a.st.id.localeCompare(b.st.id)).forEach((x,i)=>x.n=i+1);
+  const seen=new Map();arr.forEach(x=>{if(!x.future)seen.set(x.key,(seen.get(x.key)||0)+1)});
+  arr.forEach(x=>x.seen=seen.get(x.key)||0);
+  return arr;
+}
+const evLineup=(id)=>items().filter(x=>x.ev.id===id).sort((a,b)=>a.st.band.localeCompare(b.st.band,'it'));
+const distinctSorted=a=>uniq(a.filter(Boolean)).sort((x,y)=>x.localeCompare(y,'it'));
+
+/* ============ modali ============ */
+function modal(html,cls=''){
+  const el=document.createElement('div');el.className='backdrop';
+  el.innerHTML=`<div class="modal ${cls}" role="dialog">${html}</div>`;
+  $('#modal-root').appendChild(el);
+  el.close=()=>el.remove();
+  el.addEventListener('mousedown',e=>{if(e.target===el)el.close()});
+  $$('[data-close]',el).forEach(b=>b.onclick=el.close);
+  hydrate(el);return el;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const l=$$('.backdrop');if(l.length)l[l.length-1].remove()}});
+function closeAll(){$$('.backdrop').forEach(b=>b.remove())}
+
+/* ============ figurina (card) ============ */
+function phHTML(it,big){
+  const s=it.st;
+  return `<div class="ini">${esc(initials(s.band))}</div>${s.photo?`<img data-photo="${esc(s.photo)}" alt="${esc(s.band)}">`:''}`;
+}
+function cardHTML(it){
+  const {st,ev}=it;
+  return `<article class="card ${it.future?'future':''}" data-sid="${st.id}"><div class="in">
+    <div class="ph" data-open="${st.id}" style="--g:${grad(st.band)}">${phHTML(it)}
+      <span class="num">#${pad(it.n)}</span>
+      ${it.seen?`<span class="cnt" title="Volte che hai visto questa band">${it.seen}×</span>`:''}
+      ${it.future?'<span class="rib">PROSSIMAMENTE</span>':''}</div>
+    <div class="meta"><h3>${esc(st.band)}</h3>
+      <div class="s">📅 ${esc(evDate(ev))}</div>
+      ${place(ev)?`<div class="s">📍 ${esc(place(ev))}</div>`:''}
+      <span class="tag" data-tag="${esc(ev.id)}" title="Filtra per questo concerto/festival">🏷 ${esc(ev.name)}</span>
+    </div></div></article>`;
+}
+function bindCards(root,onTag){
+  $$('[data-open]',root).forEach(e=>e.onclick=()=>lightbox(e.dataset.open));
+  $$('[data-tag]',root).forEach(e=>e.onclick=ev=>{ev.stopPropagation();onTag?onTag(e.dataset.tag):(location.hash='#/event/'+e.dataset.tag)});
+}
+function lightbox(sid){
+  const it=items().find(x=>x.st.id===sid);if(!it)return;
+  const {st,ev}=it;
+  const el=modal(`<button class="x" data-close>✕</button>
+   <div class="lb-img" style="--g:${grad(st.band)}">${phHTML(it,true)}</div>
+   <div class="lb-info">
+     <small style="color:var(--mut)">Figurina #${pad(it.n)}${it.future?' · PROSSIMAMENTE':''}</small>
+     <h2>${esc(st.band)}</h2>
+     <div>📅 ${esc(evDate(ev))}</div>
+     ${place(ev)?`<div>📍 ${esc(place(ev))}</div>`:''}
+     <div>🏷 <b>${esc(ev.name)}</b></div>
+     <div style="color:var(--mut)">${it.seen?`Visti <b style="color:var(--b)">${it.seen}</b> ${plural(it.seen,'volta','volte')}`:'Non ancora visti dal vivo'}</div>
+     <div class="actions">
+       <button class="btn pri" data-a="open">Apri</button>
+       <button class="btn" data-a="band">Pagina band</button>
+       <button class="btn" data-a="edit">Modifica</button>
+     </div></div>`,'lb');
+  el.onclick=e=>{const a=e.target.dataset?.a;if(!a)return;
+    if(a==='open'){closeAll();location.hash='#/event/'+ev.id}
+    if(a==='band'){closeAll();location.hash='#/band/'+encodeURIComponent(it.key)}
+    if(a==='edit'){closeAll();stickerForm(st.id)}};
+}
+
+/* ============ form figurina / concerto ============ */
+function eventFields(ev={}){
+  return `<label>Nome concerto / festival *</label><input name="name" required value="${esc(ev.name||'')}" placeholder="es. Hellfest 2026">
+  <div class="r2"><div><label>Data (inizio) *</label><input type="date" name="date" value="${esc(ev.date||'')}"></div>
+  <div><label>Data fine (se più giorni)</label><input type="date" name="endDate" value="${esc(ev.endDate||'')}"></div></div>
+  <div class="r2"><div><label>Luogo / locale</label><input name="venue" list="dl-venue" value="${esc(ev.venue||'')}" placeholder="es. Palazzo dello Sport"></div>
+  <div><label>Città</label><input name="city" list="dl-city" value="${esc(ev.city||'')}"></div></div>
+  <label>Con chi sono andato (separa con virgola)</label><input name="companions" list="dl-comp" value="${esc((ev.companions||[]).join(', '))}" placeholder="Erika, Rodolfo">
+  <label>Note</label><textarea name="notes" rows="3">${esc(ev.notes||'')}</textarea>`;
+}
+function readEvent(root,base={}){
+  const g=n=>$(`[name=${n}]`,root).value.trim();
+  const d=g('date');
+  return Object.assign(base,{name:g('name'),date:d,endDate:g('endDate')&&g('endDate')>d?g('endDate'):'',venue:g('venue'),city:g('city'),
+    companions:g('companions').split(',').map(s=>s.trim()).filter(Boolean),notes:g('notes')});
+}
+function datalists(){
+  const ev=DB.events;
+  return `<datalist id="dl-band">${distinctSorted(DB.stickers.map(s=>s.band)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
+  <datalist id="dl-venue">${distinctSorted(ev.map(e=>e.venue)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
+  <datalist id="dl-city">${distinctSorted(ev.map(e=>e.city)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
+  <datalist id="dl-comp">${distinctSorted(ev.flatMap(e=>e.companions||[])).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>`;
+}
+function stickerForm(sid,presetEvent=''){
+  const st=sid?DB.stickers.find(s=>s.id===sid):{band:'',eventId:presetEvent,photo:null};
+  if(sid&&!st)return;
+  const evs=[...DB.events].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const sel=st.eventId||(evs.length?'':'__new');
+  const el=modal(`<button class="x" data-close>✕</button><form class="f" autocomplete="off">
+    <h2>${sid?'Modifica figurina':'Nuova figurina'}</h2>
+    ${datalists()}
+    <label>Nome band *</label><input name="band" list="dl-band" required value="${esc(st.band)}">
+    <label>Foto</label>
+    <div style="display:flex;gap:12px;align-items:center">
+      <img class="prev" id="prev" alt="">
+      <div><input type="file" accept="image/*" id="file"><div style="color:var(--mut);font-size:12px;margin-top:4px">Viene ridimensionata e salvata nell'album.</div>
+      ${st.photo?`<label class="chk"><input type="checkbox" id="rmphoto"> Rimuovi foto</label>`:''}</div>
+    </div>
+    <label>Concerto / festival (tag) *</label>
+    <select name="eventId"><option value="__new">＋ Nuovo concerto / festival…</option>
+      ${evs.map(e=>`<option value="${e.id}" ${e.id===sel?'selected':''}>${esc(e.name)} — ${esc(fmt(e.date))}${e.city?' ('+esc(e.city)+')':''}</option>`).join('')}</select>
+    <div class="newev" id="newev" hidden>${eventFields({})}</div>
+    <div id="evinfo" style="color:var(--mut);font-size:13px;margin-top:6px"></div>
+    ${sid?'':`<label class="chk"><input type="checkbox" id="again"> Salva e aggiungi un'altra band dello stesso concerto</label>`}
+    <div class="acts">${sid?'<button type="button" class="btn dan" id="del">Elimina</button><span class="sp"></span>':''}
+      <button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Salva</button></div>
+  </form>`);
+  const form=$('form',el),selEl=$('[name=eventId]',form),newev=$('#newev',form);
+  let newPhoto=null;
+  if(st.photo)photoURL(st.photo).then(u=>{if(u&&!newPhoto)$('#prev',el).src=u});
+  const syncEv=()=>{const isNew=selEl.value==='__new';newev.hidden=!isNew;
+    $$('[name=name],[name=date]',newev).forEach(i=>i.required=isNew);
+    const e=DB.events.find(x=>x.id===selEl.value);
+    $('#evinfo',el).textContent=e?`📅 ${evDate(e)}${place(e)?'  📍 '+place(e):''}${e.companions?.length?'  👥 '+e.companions.join(', '):''}`:''};
+  selEl.onchange=syncEv;syncEv();
+  $('#file',el).onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    try{newPhoto=await resizeImage(f);$('#prev',el).src=URL.createObjectURL(newPhoto)}catch(err){toast(err.message,'err')}};
+  if($('#del',el))$('#del',el).onclick=()=>{if(!confirm('Eliminare questa figurina?'))return;removeSticker(sid);el.close();toast('Figurina eliminata');route()};
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const band=form.band.value.trim();if(!band)return;
+    let eventId=selEl.value;
+    if(eventId==='__new'){
+      const ne=readEvent(newev,{id:uid()});
+      if(!ne.name||!ne.date){toast('Servono nome e data del concerto','err');return}
+      DB.events.push(ne);eventId=ne.id;
+    }
+    let photo=st.photo||null;const oldPhoto=photo;
+    if(newPhoto){photo=uid();await idb.put(photo,newPhoto)}
+    else if($('#rmphoto',el)?.checked)photo=null;
+    if(sid){Object.assign(st,{band,eventId,photo})}
+    else DB.stickers.push({id:uid(),band,eventId,photo});
+    if(oldPhoto&&oldPhoto!==photo&&!DB.stickers.some(s=>s.photo===oldPhoto)){idb.del(oldPhoto);urls.delete(oldPhoto)}
+    touch();el.close();toast('Figurina salvata','ok');
+    if(!sid&&$('#again',el)?.checked){route();stickerForm('',eventId);return}
+    route();
+  };
+}
+function removeSticker(id){
+  const s=DB.stickers.find(x=>x.id===id);if(!s)return;
+  DB.stickers=DB.stickers.filter(x=>x.id!==id);
+  if(s.photo&&!DB.stickers.some(x=>x.photo===s.photo)){idb.del(s.photo);urls.delete(s.photo)}
+  touch();
+}
+function eventForm(id){
+  const ev=DB.events.find(e=>e.id===id);if(!ev)return;
+  const el=modal(`<button class="x" data-close>✕</button><form class="f" autocomplete="off"><h2>Modifica concerto / festival</h2>${datalists()}${eventFields(ev)}
+    <div class="acts"><button type="button" class="btn dan" id="del">Elimina</button><span class="sp"></span>
+    <button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Salva</button></div></form>`);
+  $('#del',el).onclick=()=>{const n=DB.stickers.filter(s=>s.eventId===id).length;
+    if(!confirm(`Eliminare "${ev.name}"${n?` e le sue ${n} figurine`:''}?`))return;
+    DB.stickers.filter(s=>s.eventId===id).forEach(s=>removeSticker(s.id));
+    DB.events=DB.events.filter(e=>e.id!==id);touch();el.close();location.hash='#/album';toast('Concerto eliminato')};
+  $('form',el).onsubmit=e=>{e.preventDefault();readEvent(el,ev);if(!ev.name||!ev.date){toast('Servono nome e data','err');return}touch();el.close();route();toast('Salvato','ok')};
+}
+
+/* ============ vista: album ============ */
+function applyFilters(arr){
+  const q=norm(F.q);
+  let r=arr.filter(x=>{
+    if(F.status==='seen'&&x.future)return false;
+    if(F.status==='future'&&!x.future)return false;
+    if(F.year&&yearOf(x.ev)!==F.year)return false;
+    if(F.city&&x.ev.city!==F.city)return false;
+    if(F.event&&x.ev.id!==F.event)return false;
+    if(F.band&&x.key!==F.band)return false;
+    if(F.comp&&!(x.ev.companions||[]).includes(F.comp))return false;
+    if(q&&!norm([x.st.band,x.ev.name,x.ev.city,x.ev.venue,(x.ev.companions||[]).join(' ')].join(' ')).includes(q))return false;
+    return true});
+  const byBand=(a,b)=>a.st.band.localeCompare(b.st.band,'it');
+  const byDate=(a,b)=>(a.ev.date||'').localeCompare(b.ev.date||'')||byBand(a,b);
+  const S={'date-desc':(a,b)=>byDate(b,a),'date-asc':byDate,'az':byBand,'za':(a,b)=>byBand(b,a),'seen':(a,b)=>b.seen-a.seen||byBand(a,b)};
+  return r.sort(S[F.sort]||S['date-desc']);
+}
+function renderAlbum(){
+  const all=items();
+  const opts=(arr,cur,label)=>`<option value="">${label}</option>`+arr.map(([v,t])=>`<option value="${esc(v)}" ${v===cur?'selected':''}>${esc(t)}</option>`).join('');
+  const years=distinctSorted(DB.events.map(yearOf)).reverse().map(y=>[y,y]);
+  const cities=distinctSorted(DB.events.map(e=>e.city)).map(c=>[c,c]);
+  const evs=[...DB.events].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>[e.id,`${e.name} (${yearOf(e)})`]);
+  const bandMap=new Map();all.forEach(x=>bandMap.set(x.key,x.st.band));
+  const bands=[...bandMap].sort((a,b)=>a[1].localeCompare(b[1],'it'));
+  const comps=distinctSorted(DB.events.flatMap(e=>e.companions||[])).map(c=>[c,c]);
+  $('#view').innerHTML=`
+  <div class="toolbar">
+    <input type="search" id="fq" placeholder="🔍 Cerca band, concerto, città…" value="${esc(F.q)}">
+    <select id="fsort"><option value="date-desc">Più recenti</option><option value="date-asc">Più vecchi</option><option value="az">A → Z</option><option value="za">Z → A</option><option value="seen">Più visti</option></select>
+    <div class="seg" id="fview"><button data-v="grid">▦ Figurine</button><button data-v="list">☰ Lista</button></div>
+  </div>
+  <div class="toolbar">
+    <select id="fstatus"><option value="">Visti + futuri</option><option value="seen">Solo visti</option><option value="future">Solo prossimi</option></select>
+    <select id="fyear">${opts(years,F.year,'Anno')}</select>
+    <select id="fcity">${opts(cities,F.city,'Città')}</select>
+    <select id="fevent">${opts(evs,F.event,'Concerto / festival')}</select>
+    <select id="fband">${opts(bands,F.band,'Band')}</select>
+    <select id="fcomp">${opts(comps,F.comp,'Con chi')}</select>
+    <button class="btn sm" id="freset">Azzera filtri</button>
+  </div>
+  <div class="summary" id="summary"></div><div id="grid"></div>`;
+  $('#fsort').value=F.sort;$('#fstatus').value=F.status;
+  const upd=()=>{jsave('ac_filters',F);updateGrid()};
+  const bind=(id,k)=>$(id).oninput=e=>{F[k]=e.target.value;upd()};
+  bind('#fq','q');bind('#fsort','sort');bind('#fstatus','status');bind('#fyear','year');bind('#fcity','city');bind('#fevent','event');bind('#fband','band');bind('#fcomp','comp');
+  $$('#fview button').forEach(b=>b.onclick=()=>{F.view=b.dataset.v;upd()});
+  $('#freset').onclick=()=>{Object.assign(F,{q:'',status:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);renderAlbum()};
+  updateGrid();
+}
+function updateGrid(){
+  const all=items(),list=applyFilters(all);
+  $$('#fview button').forEach(b=>b.classList.toggle('on',b.dataset.v===F.view));
+  const g=$('#grid');if(!g)return;
+  if(!all.length){g.innerHTML=`<div class="empty"><h2>Il tuo album è vuoto 🎟️</h2><p>Premi <b>＋ Figurina</b> per aggiungere il primo concerto.</p></div>`;$('#summary').textContent='';return}
+  const evCount=new Set(list.map(x=>x.ev.id)).size;
+  $('#summary').textContent=`${list.length} ${plural(list.length,'figurina','figurine')} · ${evCount} ${plural(evCount,'concerto/festival','concerti/festival')}`;
+  g.className='grid'+(F.view==='list'?' list':'');
+  g.innerHTML=list.length?list.map(cardHTML).join(''):`<div class="empty" style="grid-column:1/-1"><h2>Nessun risultato</h2></div>`;
+  bindCards(g,id=>{F.event=id;jsave('ac_filters',F);renderAlbum()});
+  hydrate(g);
+}
+
+/* ============ vista: scheda concerto ============ */
+function renderEvent(id){
+  const ev=DB.events.find(e=>e.id===id);
+  if(!ev){$('#view').innerHTML='<div class="empty"><h2>Concerto non trovato</h2><a href="#/album">← Album</a></div>';return}
+  const lineup=evLineup(id);const fut=ev.date>todayISO();
+  $('#view').innerHTML=`<a class="back" href="#/album">← Album</a>
+  <div class="hero"><div><small style="color:var(--mut)">${fut?'🎟️ PROSSIMAMENTE':'✅ ci sono stato'}</small><h1>${esc(ev.name)}</h1></div><span class="sp"></span>
+    <button class="btn" id="eEdit">Modifica</button><button class="btn pri" id="eAdd">＋ Aggiungi band</button></div>
+  <div class="kv"><span>📅 <b>${esc(evDate(ev))}</b></span>${place(ev)?`<span>📍 <b>${esc(place(ev))}</b></span>`:''}<span>🎤 <b>${lineup.length}</b> ${plural(lineup.length,'band','band')}</span></div>
+  <div class="panel"><h2>Band della serata</h2>${lineup.length?`<div class="mini">${lineup.map(cardHTML).join('')}</div>`:'<span style="color:var(--mut)">Ancora nessuna band: aggiungine una!</span>'}</div>
+  <div class="two"><div class="panel"><h2>Con chi sono andato</h2>${ev.companions?.length?ev.companions.map(c=>`<span class="chip">👥 ${esc(c)}</span>`).join(''):'<span style="color:var(--mut)">—</span>'}</div>
+  <div class="panel"><h2>Note</h2>${ev.notes?`<div style="white-space:pre-wrap">${esc(ev.notes)}</div>`:'<span style="color:var(--mut)">—</span>'}</div></div>`;
+  $('#eEdit').onclick=()=>eventForm(id);$('#eAdd').onclick=()=>stickerForm('',id);
+  bindCards($('#view'));hydrate($('#view'));
+}
+
+/* ============ vista: pagina band ============ */
+function renderBand(key){
+  const its=items().filter(x=>x.key===key).sort((a,b)=>(b.ev.date||'').localeCompare(a.ev.date||''));
+  if(!its.length){$('#view').innerHTML='<div class="empty"><h2>Band non trovata</h2><a href="#/album">← Album</a></div>';return}
+  const name=its[0].st.band,seen=its.filter(x=>!x.future),fut=its.filter(x=>x.future);
+  const asc=[...seen].reverse();
+  const cities=distinctSorted(seen.map(x=>x.ev.city));
+  $('#view').innerHTML=`<a class="back" href="#/album">← Album</a>
+  <div class="hero"><h1>${esc(name)}</h1><span class="sp"></span><button class="btn" id="bRen">Rinomina band</button><button class="btn pri" id="bAdd2">＋ Nuovo concerto di ${esc(name)}</button></div>
+  <div class="tiles">
+    <div class="tile"><b>${seen.length}</b><span>${plural(seen.length,'volta vista','volte visti')} dal vivo</span></div>
+    <div class="tile"><b>${fut.length}</b><span>${plural(fut.length,'concerto in arrivo','concerti in arrivo')}</span></div>
+    <div class="tile"><b>${cities.length}</b><span>${plural(cities.length,'città','città diverse')}</span></div>
+    ${asc.length?`<div class="tile"><b style="font-size:20px">${esc(fmt(asc[0].ev.date))}</b><span>prima volta</span></div>
+    <div class="tile"><b style="font-size:20px">${esc(fmt(asc[asc.length-1].ev.date))}</b><span>ultima volta</span></div>`:''}
+  </div>
+  <div class="panel"><h2>Figurine</h2><div class="mini">${its.map(cardHTML).join('')}</div></div>
+  <div class="panel"><h2>Cronologia concerti</h2><ul class="tl">${its.map(x=>`<li><span><a href="#/event/${x.ev.id}"><b>${esc(x.ev.name)}</b></a> ${x.future?'<span class="chip">prossimamente</span>':''}</span><span style="color:var(--mut)">${esc(evDate(x.ev))}${place(x.ev)?' · '+esc(place(x.ev)):''}</span></li>`).join('')}</ul></div>`;
+  $('#bAdd2').onclick=()=>{stickerForm();setTimeout(()=>{const i=$('.modal [name=band]');if(i)i.value=name},0)};
+  $('#bRen').onclick=()=>{const n=prompt('Nuovo nome per questa band (vale per tutte le sue figurine):',name);
+    if(!n||!n.trim()||n.trim()===name)return;DB.stickers.forEach(s=>{if(norm(s.band)===key)s.band=n.trim()});touch();location.hash='#/band/'+encodeURIComponent(norm(n))};
+  bindCards($('#view'));hydrate($('#view'));
+}
+
+/* ============ vista: statistiche ============ */
+const countBy=(arr,fn)=>{const m=new Map();arr.forEach(x=>{const k=fn(x);if(k)m.set(k,(m.get(k)||0)+1)});return m};
+const topN=(m,n=8)=>[...m].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'it')).slice(0,n);
+function bars(rows,link){
+  if(!rows.length)return '<span style="color:var(--mut)">Nessun dato</span>';
+  const mx=Math.max(...rows.map(r=>r.v));
+  return rows.map(r=>`<div class="bar-row"><span class="bl" title="${esc(r.l)}">${r.href?`<a href="${r.href}">${esc(r.l)}</a>`:esc(r.l)}</span><div class="bt"><i style="width:${Math.max(3,r.v/mx*100)}%"></i></div><b>${r.v}</b></div>`).join('');
+}
+function renderStats(){
+  const all=items(),t=todayISO();
+  const pastEv=DB.events.filter(e=>e.date&&e.date<=t),futEv=DB.events.filter(e=>e.date>t);
+  const past=all.filter(x=>!x.future);
+  if(!DB.events.length){$('#view').innerHTML='<div class="empty"><h2>Nessuna statistica, per ora 📊</h2><p>Aggiungi qualche concerto all\'album.</p></div>';return}
+  const names=new Map();past.forEach(x=>names.set(x.key,x.st.band));
+  const perBand=countBy(past,x=>x.key);
+  const perYear=countBy(pastEv,e=>yearOf(e));
+  const years=[...perYear.keys()].sort();
+  const firstSeenYear=new Map();[...past].sort((a,b)=>a.ev.date.localeCompare(b.ev.date)).forEach(x=>{if(!firstSeenYear.has(x.key))firstSeenYear.set(x.key,yearOf(x.ev))});
+  const newPerYear=countBy([...firstSeenYear.values()],y=>y);
+  const perCity=countBy(pastEv,e=>e.city),perVenue=countBy(pastEv,e=>e.venue);
+  const compMap=new Map();pastEv.forEach(e=>(e.companions||[]).forEach(c=>{const k=norm(c);const o=compMap.get(k)||{n:c,c:0};o.c++;compMap.set(k,o)}));
+  const perMonth=countBy(pastEv,e=>['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'][+e.date.slice(5,7)-1]);
+  const days=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+  const perDow=countBy(pastEv,e=>days[new Date(e.date+'T12:00:00').getDay()]);
+  const lineupSize=new Map(pastEv.map(e=>[e.id,past.filter(x=>x.ev.id===e.id).length]));
+  const sizes=[...lineupSize.values()];
+  const biggest=[...lineupSize].sort((a,b)=>b[1]-a[1])[0];
+  const festivals=sizes.filter(n=>n>=4).length;
+  const once=[...perBand.values()].filter(v=>v===1).length,loyal=[...perBand.values()].filter(v=>v>=3).length;
+  const citiesPerBand=new Map();past.forEach(x=>{if(!x.ev.city)return;const s=citiesPerBand.get(x.key)||new Set();s.add(x.ev.city);citiesPerBand.set(x.key,s)});
+  const roamer=[...citiesPerBand].sort((a,b)=>b[1].size-a[1].size)[0];
+  const dates=uniq(pastEv.map(e=>e.date)).sort();
+  let gap={d:0};for(let i=1;i<dates.length;i++){const d=Math.round((new Date(dates[i])-new Date(dates[i-1]))/864e5);if(d>gap.d)gap={d,a:dates[i-1],b:dates[i]}}
+  const next=[...futEv].sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const dd=d=>Math.ceil((new Date(d+'T12:00:00')-new Date(t+'T12:00:00'))/864e5);
+  const last=dates[dates.length-1];
+  const bestYear=topN(perYear,1)[0];
+  const avg=sizes.length?(sizes.reduce((a,b)=>a+b,0)/sizes.length).toFixed(1).replace('.',','):'0';
+  const li=(h)=>`<li>${h}</li>`;
+  const tile=(v,l)=>`<div class="tile"><b>${v}</b><span>${l}</span></div>`;
+  $('#view').innerHTML=`<h1 style="margin-bottom:14px">📊 Statistiche</h1>
+  <div class="tiles">
+    ${tile(pastEv.length,'concerti / festival visti')}
+    ${tile(perBand.size,'band uniche viste')}
+    ${tile(past.length,'esibizioni viste in totale')}
+    ${tile(futEv.length,'concerti in programma')}
+    ${tile(perCity.size,'città')}
+    ${tile(perVenue.size,'locali diversi')}
+    ${tile(compMap.size,'compagni di concerto')}
+  </div>
+  <div class="two">
+    <div class="panel"><h2>Band più viste</h2>${bars(topN(perBand,10).map(([k,v])=>({l:names.get(k),v,href:'#/band/'+encodeURIComponent(k)})))}</div>
+    <div class="panel"><h2>Concerti per anno</h2><div class="cols">${(()=>{const mx=Math.max(1,...perYear.values());return years.map(y=>`<div><b>${perYear.get(y)}</b><i style="height:${perYear.get(y)/mx*100*.78}%"></i><em>${y}</em></div>`).join('')})()}</div></div>
+    <div class="panel"><h2>Band nuove scoperte dal vivo, per anno</h2><div class="cols">${(()=>{const ys=[...newPerYear.keys()].sort();const mx=Math.max(1,...newPerYear.values());return ys.map(y=>`<div><b>${newPerYear.get(y)}</b><i style="height:${newPerYear.get(y)/mx*100*.78}%"></i><em>${y}</em></div>`).join('')})()}</div></div>
+    <div class="panel"><h2>Città più frequentate</h2>${bars(topN(perCity).map(([l,v])=>({l,v})))}</div>
+    <div class="panel"><h2>Locali più frequentati</h2>${bars(topN(perVenue).map(([l,v])=>({l,v})))}</div>
+    <div class="panel"><h2>Compagni di avventura</h2>${bars([...compMap.values()].sort((a,b)=>b.c-a.c).slice(0,8).map(o=>({l:o.n,v:o.c})))}</div>
+    <div class="panel"><h2>Mese preferito per i live</h2>${bars(topN(perMonth,12).map(([l,v])=>({l,v})))}</div>
+    <div class="panel"><h2>Giorno della settimana</h2>${bars(topN(perDow,7).map(([l,v])=>({l,v})))}</div>
+  </div>
+  <div class="panel"><h2>Curiosità</h2><ul class="fun">
+    ${next?li(`🎟️ Prossimo concerto: <b>${esc(next.name)}</b> tra <b>${dd(next.date)}</b> ${plural(dd(next.date),'giorno','giorni')} (${esc(fmt(next.date))})`):''}
+    ${last?li(`⏱️ Ultimo concerto: <b>${esc(fmt(last))}</b> — sono passati <b>${-dd(last)}</b> giorni`):''}
+    ${dates.length?li(`🥇 Primo concerto registrato: <b>${esc(fmt(dates[0]))}</b>`):''}
+    ${bestYear?li(`🏆 Anno record: <b>${bestYear[0]}</b> con <b>${bestYear[1]}</b> concerti`):''}
+    ${biggest&&biggest[1]?li(`🎪 Serata con più band: <b>${esc(DB.events.find(e=>e.id===biggest[0]).name)}</b> (<b>${biggest[1]}</b> band)`):''}
+    ${li(`🎤 Media di <b>${avg}</b> band a concerto · <b>${festivals}</b> ${plural(festivals,'serata','serate')} da 4+ band (stile festival)`)}
+    ${perBand.size?li(`🔁 Band viste una sola volta: <b>${once}</b> · fedelissime (3+ volte): <b>${loyal}</b>`):''}
+    ${roamer&&roamer[1].size>1?li(`🧳 Band inseguita in più città: <b>${esc(names.get(roamer[0]))}</b> in <b>${roamer[1].size}</b> città`):''}
+    ${gap.d?li(`🌵 Digiuno più lungo: <b>${gap.d}</b> giorni (da ${esc(fmt(gap.a))} a ${esc(fmt(gap.b))})`):''}
+    ${perBand.size?li(`💿 Figurine nell'album: <b>${all.length}</b>, di cui <b>${all.filter(x=>x.future).length}</b> ancora da conquistare`):''}
+  </ul></div>`;
+}
+
+/* ============ sync GitHub ============ */
+let syncLog=[],busy=false;
+const slog=m=>{syncLog.push(new Date().toLocaleTimeString('it-IT')+'  '+m);const l=$('#log');if(l){l.textContent=syncLog.join('\n');l.scrollTop=1e9}};
+const cfgReady=()=>CFG.token&&CFG.owner&&CFG.repo&&CFG.branch;
+const DATA_PATH='dati/data.json',PHOTO_DIR='dati/photos/';
+async function gh(path,o={}){
+  const r=await fetch(`https://api.github.com/repos/${CFG.owner}/${CFG.repo}${path}`,{method:o.method||'GET',cache:'no-store',
+    headers:{Authorization:'Bearer '+CFG.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(o.body?{'Content-Type':'application/json'}:{})},
+    body:o.body?JSON.stringify(o.body):undefined});
+  if(!r.ok){let m='';try{m=(await r.json()).message}catch{}const e=new Error(`GitHub ${r.status}: ${m||r.statusText}`);e.status=r.status;throw e}
+  return r.status===204?null:r.json();
+}
+const branchRef=()=>CFG.branch.split('/').map(encodeURIComponent).join('/');
+async function remoteState(){
+  let head;
+  try{head=(await gh(`/git/ref/heads/${branchRef()}`)).object.sha}
+  catch(e){if(e.status===404||e.status===409)throw new Error(`Branch "${CFG.branch}" non trovato (o repository vuoto). Controlla le impostazioni.`);throw e}
+  const commit=await gh(`/git/commits/${head}`);
+  const tree=await gh(`/git/trees/${commit.tree.sha}?recursive=1`);
+  return{head,treeSha:commit.tree.sha,entries:new Map(tree.tree.filter(t=>t.type==='blob').map(t=>[t.path,t.sha]))};
+}
+const b64bytes=b=>Uint8Array.from(atob(b.replace(/\s/g,'')),c=>c.charCodeAt(0));
+const blobToB64=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(b)});
+async function pool(list,n,fn){let i=0;await Promise.all(Array.from({length:Math.min(n,list.length)},async()=>{while(i<list.length)await fn(list[i++])}))}
+async function withBusy(fn){
+  if(busy)return;if(!cfgReady()){toast('Configura prima il token GitHub','err');location.hash='#/sync';return}
+  busy=true;$$('#bPull,#bPush,.syncbtn').forEach(b=>b.disabled=true);
+  try{await fn()}catch(e){slog('❌ '+e.message);toast(e.message,'err')}
+  finally{busy=false;$$('#bPull,#bPush,.syncbtn').forEach(b=>b.disabled=false);refreshDirty()}
+}
+const doTest=()=>withBusy(async()=>{
+  const r=await gh('');slog(`✅ Repo ${r.full_name} raggiungibile — permessi push: ${r.permissions?.push?'sì':'NO'}`);
+  if(r.permissions&&!r.permissions.push)toast('Il token non ha permessi di scrittura','err');else toast('Connessione OK','ok')});
+const doPull=()=>withBusy(async()=>{
+  if(CFG.dirty&&!confirm('Hai modifiche locali non inviate: il pull le sovrascriverà. Continuare?'))return;
+  slog('⬇ Pull: leggo il repository…');
+  const rs=await remoteState();
+  const sha=rs.entries.get(DATA_PATH);
+  if(!sha)throw new Error(`Nessun file ${DATA_PATH} nel repository: fai prima un Push.`);
+  const blob=await gh(`/git/blobs/${sha}`);
+  const remote=JSON.parse(new TextDecoder().decode(b64bytes(blob.content)));
+  if(!Array.isArray(remote.events)||!Array.isArray(remote.stickers))throw new Error('data.json non valido');
+  const need=uniq(remote.stickers.map(s=>s.photo).filter(Boolean));
+  const have=new Set(await idb.keys());
+  const missing=need.filter(id=>!have.has(id));
+  slog(`Trovati ${remote.events.length} concerti, ${remote.stickers.length} figurine, ${missing.length} foto da scaricare`);
+  let done=0;
+  await pool(missing,4,async id=>{
+    const s=rs.entries.get(PHOTO_DIR+id+'.jpg');if(!s){slog('⚠ foto mancante sul repo: '+id);return}
+    const b=await gh(`/git/blobs/${s}`);await idb.put(id,new Blob([b64bytes(b.content)],{type:'image/jpeg'}));
+    slog(`  foto ${++done}/${missing.length}`)});
+  for(const id of have)if(!need.includes(id)){await idb.del(id);urls.delete(id)}
+  DB=remote;jsave('ac_data',DB);CFG.lastCommit=rs.head;CFG.dirty=false;saveCfg();
+  slog('✅ Pull completato');toast('Pull completato','ok');route();
+});
+const doPush=()=>withBusy(async()=>{
+  slog('⬆ Push: leggo il repository…');
+  const rs=await remoteState();
+  if(rs.entries.has(DATA_PATH)&&rs.head!==CFG.lastCommit&&!confirm('Il repository è cambiato dall\'ultimo sync (altro dispositivo?). Il push sovrascriverà i dati remoti con quelli locali. Continuare?\n\n(Annulla e fai un Pull se vuoi prima scaricare le modifiche.)'))return;
+  const tree=[];
+  const need=uniq(DB.stickers.map(s=>s.photo).filter(Boolean));
+  const up=need.filter(id=>!rs.entries.has(PHOTO_DIR+id+'.jpg'));
+  slog(`Foto da caricare: ${up.length}`);let n=0;
+  await pool(up,3,async id=>{
+    const b=await idb.get(id);if(!b){slog('⚠ foto locale mancante: '+id);return}
+    const r=await gh('/git/blobs',{method:'POST',body:{content:await blobToB64(b),encoding:'base64'}});
+    tree.push({path:PHOTO_DIR+id+'.jpg',mode:'100644',type:'blob',sha:r.sha});slog(`  foto ${++n}/${up.length}`)});
+  for(const p of rs.entries.keys())if(p.startsWith(PHOTO_DIR)&&!need.includes(p.slice(PHOTO_DIR.length).replace(/\.jpg$/,''))){tree.push({path:p,mode:'100644',type:'blob',sha:null})}
+  const json=JSON.stringify(DB,null,1);
+  const jb=await gh('/git/blobs',{method:'POST',body:{content:json,encoding:'utf-8'}});
+  if(rs.entries.get(DATA_PATH)!==jb.sha)tree.push({path:DATA_PATH,mode:'100644',type:'blob',sha:jb.sha});
+  if(!tree.length){CFG.lastCommit=rs.head;CFG.dirty=false;saveCfg();slog('✅ Già tutto aggiornato');toast('Già aggiornato','ok');return}
+  const nt=await gh('/git/trees',{method:'POST',body:{base_tree:rs.treeSha,tree}});
+  const c=await gh('/git/commits',{method:'POST',body:{message:`Album concerti: aggiornamento ${new Date().toLocaleString('it-IT')}`,tree:nt.sha,parents:[rs.head]}});
+  await gh(`/git/refs/heads/${branchRef()}`,{method:'PATCH',body:{sha:c.sha}});
+  CFG.lastCommit=c.sha;CFG.dirty=false;saveCfg();
+  slog('✅ Push completato (commit '+c.sha.slice(0,7)+')');toast('Push completato','ok');
+});
+function renderSync(){
+  $('#view').innerHTML=`<h1 style="margin-bottom:14px">🔄 Sincronizzazione GitHub</h1>
+  <div class="two"><div class="panel f"><h2>Impostazioni</h2>
+    <div class="r2"><div><label>Utente / organizzazione</label><input id="cOwner" value="${esc(CFG.owner)}"></div><div><label>Repository</label><input id="cRepo" value="${esc(CFG.repo)}"></div></div>
+    <label>Branch</label><input id="cBranch" value="${esc(CFG.branch)}">
+    <label>Token GitHub (permesso <i>Contents: read &amp; write</i> sul repo)</label><input id="cToken" type="password" autocomplete="off" value="${esc(CFG.token)}" placeholder="github_pat_…">
+    <div class="acts"><button class="btn syncbtn" id="cSave">Salva</button><button class="btn syncbtn" id="cTest">Testa connessione</button></div>
+    <p style="color:var(--mut);font-size:13px">Il token resta <b>solo in questo browser</b> (localStorage) e viene usato solo verso api.github.com. I dati vanno in <code>${DATA_PATH}</code>, le foto in <code>${PHOTO_DIR}</code>.</p>
+  </div>
+  <div class="panel"><h2>Stato</h2>
+    <p>Modifiche locali non inviate: <b style="color:${CFG.dirty?'var(--b)':'var(--ok)'}">${CFG.dirty?'sì':'no'}</b><br>Ultimo commit sincronizzato: <b>${CFG.lastCommit?CFG.lastCommit.slice(0,7):'—'}</b></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn syncbtn" id="sPull">⬇ Pull (GitHub → qui)</button><button class="btn pri syncbtn" id="sPush">⬆ Push (qui → GitHub)</button></div>
+    <h2 style="margin-top:16px">Log</h2><div class="log" id="log">${esc(syncLog.join('\n'))||'—'}</div>
+  </div></div>`;
+  const save=()=>{CFG.owner=$('#cOwner').value.trim();CFG.repo=$('#cRepo').value.trim();CFG.branch=$('#cBranch').value.trim()||'main';CFG.token=$('#cToken').value.trim();saveCfg();toast('Impostazioni salvate','ok')};
+  $('#cSave').onclick=save;$('#cTest').onclick=()=>{save();doTest()};$('#sPull').onclick=doPull;$('#sPush').onclick=doPush;
+}
+
+/* ============ router ============ */
+function route(top){
+  const [,p,arg]=(location.hash||'#/album').split('/');
+  const page=p||'album';
+  $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.n===(page==='event'||page==='band'?'album':page)));
+  const a=arg?decodeURIComponent(arg):'';
+  if(page==='stats')renderStats();else if(page==='sync')renderSync();else if(page==='event')renderEvent(a);else if(page==='band')renderBand(a);else renderAlbum();
+  if(top)window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",()=>{closeAll();route(true)});
+$('#bAdd').onclick=()=>stickerForm();
+$('#bPull').onclick=doPull;$('#bPush').onclick=doPush;
+refreshDirty();route();
+if(navigator.storage?.persist)navigator.storage.persist().catch(()=>{});
+</script>
+</body>
+</html>

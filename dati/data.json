@@ -240,6 +240,30 @@
     "Erry"
    ],
    "notes": ""
+  },
+  {
+   "id": "mwaiwaafwly0w",
+   "name": "Evolution Tour",
+   "festival": "",
+   "date": "2019-04-22",
+   "endDate": "",
+   "venue": "Alcatraz",
+   "city": "Milano",
+   "companions": [],
+   "notes": ""
+  },
+  {
+   "id": "mwajqdtye9wdx",
+   "name": "",
+   "festival": "Bologna Sonic Park",
+   "date": "2019-06-27",
+   "endDate": "",
+   "venue": "Arena Parco Nord",
+   "city": "Bologna",
+   "companions": [
+    "Letizia"
+   ],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -525,7 +549,57 @@
    "tour": "",
    "headliner": false,
    "pending": false
+  },
+  {
+   "id": "mwaiwab2fx8dh",
+   "band": "Disturbed",
+   "eventId": "mwaiwaafwly0w",
+   "photo": "mwaiwaagv8jel",
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "mwaj0w2hlqplj",
+   "band": "Skindred",
+   "eventId": "mwaiwaafwly0w",
+   "photo": "mwaj0w22or1qv",
+   "tour": "",
+   "headliner": false,
+   "pending": false
+  },
+  {
+   "id": "mwajqdua0nt9m",
+   "band": "Slipknot",
+   "eventId": "mwajqdtye9wdx",
+   "photo": "mwajqdtymo9sm",
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "mwajtc3zxumfy",
+   "band": "Amon Amarth",
+   "eventId": "mwajqdtye9wdx",
+   "photo": "mwajtc3p3amhx",
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "mwajvcw7962z3",
+   "band": "Testament",
+   "eventId": "mwajqdtye9wdx",
+   "photo": "mwajvcvflccbr",
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "mwajzy0puolj2",
+   "band": "Lacuna Coil",
+   "eventId": "mwajqdtye9wdx",
+   "photo": "mwajzy08vrm1p",
+   "tour": "",
+   "headliner": false,
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-10T09:55:37.147Z"
+ "updatedAt": "2026-11-10T10:34:57.436Z"
 }

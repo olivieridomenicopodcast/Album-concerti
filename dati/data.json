@@ -623,7 +623,7 @@
    "eventId": "mwail91mu6rjb",
    "photo": "mwail91odvlle",
    "tour": "",
-   "headliner": false,
+   "headliner": true,
    "pending": false
   },
   {
@@ -783,5 +783,5 @@
    "headliner": false
   }
  ],
- "updatedAt": "2026-11-10T11:10:42.000Z"
+ "updatedAt": "2026-11-10T11:11:28.000Z"
 }

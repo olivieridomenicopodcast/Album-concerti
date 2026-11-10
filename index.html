@@ -358,6 +358,20 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 .pk-sum{width:100%;margin-bottom:10px}
 .own{color:var(--c)!important}.cap .own{font-size:.95em}
 .b-hd{display:flex;align-items:center;gap:2px;margin:0!important;color:var(--tx)!important;cursor:pointer}.b-hd input{width:auto!important}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:26px 22px;padding:10px 4px 30px}
+.pcard{position:relative;margin:0;background:var(--card);border:1px solid var(--line);padding:9px 9px 10px;border-radius:4px;box-shadow:0 8px 18px #0008;transform:rotate(var(--rot,0deg));cursor:pointer;transition:transform .25s,box-shadow .25s;animation:pinIn .6s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:calc(var(--i,0)*60ms)}
+.pcard:hover{transform:rotate(0) scale(1.05) translateY(-4px);box-shadow:0 16px 30px #000b;z-index:2}
+@keyframes pinIn{from{opacity:0;transform:translateY(-60px) rotate(calc(var(--rot,0deg)*5)) scale(.8)}to{opacity:1}}
+.tape{position:absolute;top:-10px;left:50%;width:70px;height:20px;margin-left:-35px;background:color-mix(in srgb,var(--b) 55%,transparent);transform:rotate(-3deg);box-shadow:0 1px 3px #0005}
+.pimg{position:relative;background:var(--bg);display:flex;align-items:center;justify-content:center;min-height:200px}
+.pimg img{display:block;width:100%;height:auto;opacity:1}
+.pimg img[data-photo]{opacity:0;transition:opacity .3s}.pimg img[data-photo].ok{opacity:1}
+.pcard figcaption{display:flex;flex-direction:column;gap:2px;margin-top:8px;font-size:13px;color:var(--mut)}.pcard figcaption b{color:var(--tx);font-size:14px}
+.pcard.empty{background:transparent;border-style:dashed;box-shadow:none;opacity:.7}.pcard.empty .pimg{background:transparent;color:var(--mut);text-align:center;font-size:20px;min-height:230px}
+.pmiss{display:none;position:absolute;color:var(--mut);font-size:12px;padding:10px;text-align:center}
+.broken .pmiss{display:block}.broken img{display:none!important}
+.posterbox{max-width:420px;cursor:zoom-in;position:relative}.posterbox img{width:100%;height:auto;border-radius:6px;box-shadow:0 8px 20px #0008}
+.modal.poster{max-width:640px}.pbig img{width:100%;max-height:78vh;object-fit:contain;display:block;border-radius:8px;opacity:1}
 </style>
 </head>
 <body>
@@ -367,6 +381,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
     <a href="#/album" data-n="album">📖 Album</a>
     <a href="#/collezione" data-n="collezione">▦ Collezione</a>
     <a href="#/packs" data-n="packs">📦 Pacchetti<span id="pkBadge" hidden></span></a>
+    <a href="#/posters" data-n="posters">🖼 Locandine</a>
     <a href="#/random" data-n="random">🎲 Scopri</a>
     <a href="#/stats" data-n="stats">Statistiche</a>
     <a href="#/sync" data-n="sync">Sync</a>
@@ -385,7 +400,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=10,BUILD_DATE='2026-11-10';
+const BUILD=11,BUILD_DATE='2026-11-10';
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -667,13 +682,63 @@ function removeSticker(id){
 function eventForm(id){
   const ev=DB.events.find(e=>e.id===id);if(!ev)return;
   const el=modal(`<button class="x" data-close>✕</button><form class="f" autocomplete="off"><h2>Modifica concerto / festival</h2>${datalists()}${eventFields(ev)}
+    <label>Locandina dell'evento</label>
+    <div style="display:flex;gap:12px;align-items:flex-start"><img class="prev" id="eprev" alt="" style="width:84px;aspect-ratio:2/3;object-fit:cover">
+      <div style="flex:1"><input type="file" accept="image/*" id="efile">
+        <input name="posterUrl" placeholder="oppure incolla il link di un'immagine" value="${esc(ev.posterUrl||'')}" style="margin-top:6px">
+        ${ev.poster?`<label class="chk"><input type="checkbox" id="rmposter"> Rimuovi la locandina caricata</label>`:''}</div></div>
     <div class="acts"><button type="button" class="btn dan" id="del">Elimina</button><span class="sp"></span>
     <button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Salva</button></div></form>`);
   $('#del',el).onclick=()=>{const n=DB.stickers.filter(s=>s.eventId===id).length;
     if(!confirm(`Eliminare "${evTitle(ev)}"${n?` e le sue ${n} figurine`:''}?`))return;
     DB.stickers.filter(s=>s.eventId===id).forEach(s=>removeSticker(s.id));
     DB.events=DB.events.filter(e=>e.id!==id);touch();el.close();location.hash='#/album';toast('Concerto eliminato')};
-  $('form',el).onsubmit=e=>{e.preventDefault();readEvent(el,ev);if((!ev.name&&!ev.festival)||!ev.date){toast('Servono data e nome del concerto o del festival','err');return}touch();el.close();route();toast('Salvato','ok')};
+  let newPoster=null;
+  const pv=$('#eprev',el);if(ev.poster)photoURL(ev.poster).then(u=>{if(u&&!newPoster)pv.src=u});else if(ev.posterUrl)pv.src=ev.posterUrl;
+  $('#efile',el).onchange=async e=>{const f=e.target.files[0];if(!f)return;try{newPoster=await resizeImage(f,1600);pv.src=URL.createObjectURL(newPoster)}catch(err){toast(err.message,'err')}};
+  $('form',el).onsubmit=async e=>{e.preventDefault();readEvent(el,ev);if((!ev.name&&!ev.festival)||!ev.date){toast('Servono data e nome del concerto o del festival','err');return}
+    ev.posterUrl=$('[name=posterUrl]',el).value.trim();
+    const old=ev.poster;
+    if(newPoster){ev.poster=uid();await idb.put(ev.poster,newPoster)}else if($('#rmposter',el)?.checked)ev.poster='';
+    if(old&&old!==ev.poster&&!DB.events.some(x=>x.poster===old)){idb.del(old);urls.delete(old)}
+    touch();el.close();route();toast('Salvato','ok')};
+}
+const hasPoster=e=>!!(e.poster||e.posterUrl);
+function posterImg(e){
+  return e.poster?`<img data-photo="${esc(e.poster)}" alt="Locandina ${esc(evTitle(e))}">`
+    :`<img class="ok" src="${esc(e.posterUrl)}" alt="Locandina ${esc(evTitle(e))}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.pcard,.posterbox')?.classList.add('broken')">`;
+}
+function posterModal(e){
+  const el=modal(`<button class="x" data-close>✕</button><div class="pbig">${posterImg(e)}</div>
+    <h2 style="margin-top:10px">${esc(evTitle(e))}</h2><div class="kv"><span>📅 <b>${esc(evDate(e))}</b></span>${place(e)?`<span>📍 <b>${esc(place(e))}</b></span>`:''}</div>
+    <div class="acts" style="display:flex;gap:8px;margin-top:10px"><button class="btn pri" data-a="open">Apri evento</button><button class="btn" data-a="edit">Modifica</button></div>`,'poster');
+  el.onclick=ev=>{const a=ev.target.dataset?.a;if(a==='open'){closeAll();go('#/event/'+e.id)}if(a==='edit'){closeAll();eventForm(e.id)}};
+}
+function renderPosters(){
+  const live=liveEvents(),withP=live.filter(hasPoster);
+  if(F.pshow===undefined)F.pshow=false;
+  $('#view').innerHTML=`<h1 style="margin-bottom:4px">🖼 Locandine</h1>
+  <p style="color:var(--mut);margin:0 0 10px">${withP.length} ${plural(withP.length,'locandina','locandine')} su ${live.length} eventi.</p>
+  <div class="toolbar"><input type="search" id="pq" placeholder="🔍 Cerca evento, festival, città…" value="${esc(F.pq||'')}">
+    <select id="pyear"><option value="">Tutti gli anni</option>${distinctSorted(live.map(yearOf)).reverse().map(y=>`<option ${F.pyear===y?'selected':''}>${y}</option>`).join('')}</select>
+    <label class="btn sm" style="cursor:pointer"><input type="checkbox" id="pshow" ${F.pshow?'checked':''} style="width:auto;margin-right:6px">Mostra anche gli eventi senza locandina</label></div>
+  <div class="wall" id="wall"></div>`;
+  const draw=()=>{
+    const q=norm(F.pq||'');
+    let list=live.filter(e=>(F.pshow||hasPoster(e))&&(!F.pyear||yearOf(e)===F.pyear)&&(!q||norm([evTitle(e),e.name,e.festival,e.city,e.venue].join(' ')).includes(q)))
+      .sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    $('#wall').innerHTML=list.length?list.map((e,i)=>{const rot=((hue(e.id)%40)-20)/10;
+      return hasPoster(e)?`<figure class="pcard" data-pid="${esc(e.id)}" style="--rot:${rot}deg;--i:${Math.min(i,20)}"><i class="tape"></i><div class="pimg">${posterImg(e)}<span class="pmiss">locandina non caricabile</span></div><figcaption><b>${esc(evTitle(e))}</b><span>${esc(fmt(e.date))}${e.city?' · '+esc(e.city):''}</span></figcaption></figure>`
+      :`<figure class="pcard empty" data-eid="${esc(e.id)}" style="--rot:${rot}deg;--i:${Math.min(i,20)}"><div class="pimg"><span>🖼<br>＋ locandina</span></div><figcaption><b>${esc(evTitle(e))}</b><span>${esc(fmt(e.date))}${e.city?' · '+esc(e.city):''}</span></figcaption></figure>`}).join('')
+      :`<div class="empty" style="grid-column:1/-1"><h2>Nessuna locandina</h2><p>Aggiungile da <b>Modifica</b> in ogni evento.</p></div>`;
+    $$('.pcard[data-pid]',$('#wall')).forEach(c=>c.onclick=()=>posterModal(DB.events.find(e=>e.id===c.dataset.pid)));
+    $$('.pcard[data-eid]',$('#wall')).forEach(c=>c.onclick=()=>eventForm(c.dataset.eid));
+    hydrate($('#wall'));
+  };
+  $('#pq').oninput=e=>{F.pq=e.target.value;draw()};
+  $('#pyear').onchange=e=>{F.pyear=e.target.value;draw()};
+  $('#pshow').onchange=e=>{F.pshow=e.target.checked;draw()};
+  draw();
 }
 
 /* ============ filtri condivisi (album sfogliabile + collezione) ============ */
@@ -895,10 +960,12 @@ function renderEvent(id){
   <div class="hero"><div><small style="color:var(--mut)">✅ ci sono stato</small><h1>${esc(evTitle(ev))}</h1></div><span class="sp"></span>
     <button class="btn" id="eEdit">Modifica</button><button class="btn pri" id="eAdd">＋ Aggiungi band</button></div>
   <div class="kv"><span>📅 <b>${esc(evDate(ev))}</b></span>${place(ev)?`<span>📍 <b>${esc(place(ev))}</b></span>`:''}<span>🎤 <b>${lineup.length}</b> ${plural(lineup.length,'band','band')}</span></div>
+  ${hasPoster(ev)?`<div class="panel"><h2>Locandina</h2><div class="posterbox" id="ePoster">${posterImg(ev)}<span class="pmiss">locandina non caricabile</span></div></div>`:''}
   <div class="panel"><h2>Band della serata</h2>${lineup.length?`<div class="mini">${lineup.map(cardHTML).join('')}</div>`:'<span style="color:var(--mut)">Ancora nessuna band: aggiungine una!</span>'}</div>
   <div class="two"><div class="panel"><h2>Con chi sono andato</h2>${ev.companions?.length?ev.companions.map(c=>`<span class="chip">👥 ${esc(c)}</span>`).join(''):'<span style="color:var(--mut)">—</span>'}</div>
   <div class="panel"><h2>Note</h2>${ev.notes?`<div style="white-space:pre-wrap">${esc(ev.notes)}</div>`:'<span style="color:var(--mut)">—</span>'}</div></div>`;
   $('#eEdit').onclick=()=>eventForm(id);$('#eAdd').onclick=()=>stickerForm('',id);
+  if($('#ePoster'))$('#ePoster').onclick=()=>posterModal(ev);
   bindCards($('#view'));hydrate($('#view'));
 }
 
@@ -1044,7 +1111,7 @@ const doPull=()=>withBusy(async()=>{
   const blob=await gh(`/git/blobs/${sha}`);
   const remote=JSON.parse(new TextDecoder().decode(b64bytes(blob.content)));
   if(!Array.isArray(remote.events)||!Array.isArray(remote.stickers))throw new Error('data.json non valido');
-  const need=uniq(remote.stickers.map(s=>s.photo).filter(Boolean));
+  const need=uniq([...remote.stickers.map(s=>s.photo),...(remote.events||[]).map(e=>e.poster)].filter(Boolean));
   const have=new Set(await idb.keys());
   const missing=need.filter(id=>!have.has(id));
   slog(`Trovati ${remote.events.length} concerti, ${remote.stickers.length} figurine, ${missing.length} foto da scaricare`);
@@ -1062,7 +1129,7 @@ const doPush=()=>withBusy(async()=>{
   const rs=await remoteState();
   if(rs.entries.has(DATA_PATH)&&rs.head!==CFG.lastCommit&&!confirm('Il repository è cambiato dall\'ultimo sync (altro dispositivo?). Il push sovrascriverà i dati remoti con quelli locali. Continuare?\n\n(Annulla e fai un Pull se vuoi prima scaricare le modifiche.)'))return;
   const tree=[];
-  const need=uniq(DB.stickers.map(s=>s.photo).filter(Boolean));
+  const need=uniq([...DB.stickers.map(s=>s.photo),...DB.events.map(e=>e.poster)].filter(Boolean));
   const up=need.filter(id=>!rs.entries.has(PHOTO_DIR+id+'.jpg'));
   slog(`Foto da caricare: ${up.length}`);let n=0;
   await pool(up,3,async id=>{
@@ -1290,7 +1357,7 @@ function route(top){
   const a=arg?decodeURIComponent(arg):'';
   const v=$('#view');v.style.animation='none';void v.offsetHeight;v.style.animation='';
   if(page==='stats')renderStats();else if(page==='sync')renderSync();else if(page==='event')renderEvent(a);else if(page==='band')renderBand(a);
-  else if(page==='collezione')renderCollection();else if(page==='random')renderRandom();else if(page==='packs')renderPacks();else renderBookView();
+  else if(page==='collezione')renderCollection();else if(page==='random')renderRandom();else if(page==='posters')renderPosters();else if(page==='packs')renderPacks();else renderBookView();
   updatePackBadge();
   if(top)window.scrollTo(0,0);
 }

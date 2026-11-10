@@ -29,3 +29,6 @@ Ogni serata può avere un **nome concerto/tour** e/o un **festival** (basta uno 
 
 ## Headliner e tour delle band di spalla
 Ogni figurina può avere un **tour proprio** (se la band, di spalla, in quella serata stava facendo un suo tour) e il flag **⭐ headliner**. I filtri "Tour" e "Headliner/Spalle" ne tengono conto.
+
+## Locandine
+Ogni evento può avere una **locandina** (caricata da *Modifica* oppure con il link di un'immagine). Si vede nella scheda dell'evento e nella sezione **🖼 Locandine**, una bacheca dedicata (con l'opzione di mostrare anche gli eventi che ancora non ce l'hanno). Le locandine caricate viaggiano con Push/Pull in `dati/photos/`.

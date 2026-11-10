@@ -8,7 +8,8 @@
    "venue": "Forum Assago",
    "city": "Milano",
    "companions": [],
-   "notes": "Primissimo concerto Metal"
+   "notes": "Primissimo concerto Metal",
+   "festival": ""
   },
   {
    "id": "mw9c63uhwppr3",
@@ -23,19 +24,21 @@
     "Pascu",
     "Enrico Zicari"
    ],
-   "notes": "Concerto bellissimo in 12 persone. La prima nota di Nightmare è iniziata alle 21:00"
+   "notes": "Concerto bellissimo in 12 persone. La prima nota di Nightmare è iniziata alle 21:00",
+   "festival": ""
   },
   {
    "id": "mw9csr07py80c",
-   "name": "Memorabilia Festival",
+   "name": "",
    "date": "2026-07-04",
    "endDate": "",
    "venue": "Centro Fonti San Lorenzo",
-   "city": "Porto Recanati",
+   "city": "Recanati",
    "companions": [
     "Erika"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": "Memorabilia Festival"
   },
   {
    "id": "mw9e41selml3d",
@@ -47,7 +50,8 @@
    "companions": [
     "Rodo"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mw9eayazsw8i2",
@@ -59,11 +63,12 @@
    "companions": [
     "Chiara"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mw9eey8iuise8",
-   "name": "Slam Dunk 2023",
+   "name": "",
    "date": "2023-06-03",
    "endDate": "",
    "venue": "Bay Arena",
@@ -73,7 +78,8 @@
     "Rodo",
     "Bella"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": "Slam Dunk 2023"
   },
   {
    "id": "mw9eioi0qxxeq",
@@ -85,7 +91,8 @@
    "companions": [
     "Erika"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mw9erq47ke27u",
@@ -102,7 +109,8 @@
     "Jacopo",
     "Titti"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mw9f1al0ny6im",
@@ -114,7 +122,8 @@
    "companions": [
     "Gale"
    ],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mwadmzei2p9c3",
@@ -124,7 +133,8 @@
    "venue": "Velvet",
    "city": "Rimini",
    "companions": [],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mwadmzgg1wq6o",
@@ -134,7 +144,8 @@
    "venue": "Unipol Arena",
    "city": "Bologna",
    "companions": [],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   },
   {
    "id": "mwadmzghsgww2",
@@ -144,7 +155,8 @@
    "venue": "Parco Fluviale Alex Langer",
    "city": "Monte Urano",
    "companions": [],
-   "notes": ""
+   "notes": "",
+   "festival": "Bamboo Festival"
   },
   {
    "id": "mwadmzgirsaqz",
@@ -154,7 +166,8 @@
    "venue": "Arena della Regina",
    "city": "Cattolica",
    "companions": [],
-   "notes": ""
+   "notes": "",
+   "festival": ""
   }
  ],
  "stickers": [
@@ -299,5 +312,5 @@
    "pending": false
   }
  ],
- "updatedAt": "2026-11-10T07:37:25.147Z"
+ "updatedAt": "2026-11-10T07:45:34.000Z"
 }

@@ -337,7 +337,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 .modal.wide{max-width:980px}
 .bacts{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
 #brows{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow:auto;padding:2px}
-.brow{display:grid;grid-template-columns:54px minmax(110px,1.1fr) minmax(130px,1.4fr) 136px minmax(90px,1fr) minmax(80px,.8fr) auto;gap:6px;align-items:center;animation:cardIn .3s both}
+.brow{display:grid;grid-template-columns:54px minmax(110px,1.1fr) minmax(120px,1.2fr) minmax(110px,1fr) 136px minmax(90px,1fr) minmax(80px,.8fr) auto;gap:6px;align-items:center;animation:cardIn .3s both}
 .brow.bad input{border-color:var(--bad)}
 .bph{position:relative;width:54px;height:54px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;background:var(--bg);margin:0!important}
 .bph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
@@ -345,6 +345,17 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 .bpack{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
 @media(max-width:820px){.brow{grid-template-columns:54px 1fr 1fr}.brow .b-date,.brow .b-venue{grid-column:span 1}.brow .b-rm{grid-column:3}}
 .panel.f input[type=number]{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.gsec{margin-bottom:26px}
+.ghead{margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.ghead h3{font-size:20px}.ghead .kv{margin:2px 0 0}
+.minirow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.rpdone{display:flex;flex-direction:column;justify-content:center;padding:12px;border:1px dashed var(--line);border-radius:14px;color:var(--mut);animation:popIn .4s both}
+.trt{position:relative;display:inline-block;width:44px;aspect-ratio:5/6;border:2px solid #fff;border-radius:3px;background:var(--g);overflow:hidden;animation:popIn .4s both;cursor:pointer}
+.trt b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff9;font-size:16px}
+.trt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}.trt img.ok{opacity:1}
+.pk-tray{position:absolute;bottom:64px;left:0;right:0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 14px}
+.pk-stage.sum{max-height:84vh;overflow:auto;width:min(96vw,1000px);justify-content:flex-start;padding:10px}
+.pk-sum{width:100%;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -372,7 +383,7 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=8,BUILD_DATE='2026-11-09';
+const BUILD=9,BUILD_DATE='2026-11-10';
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -385,6 +396,7 @@ const pad=n=>String(n).padStart(3,'0');
 const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'}):'—';
 const evDate=e=>e.endDate&&e.endDate>e.date?`${fmt(e.date)} → ${fmt(e.endDate)}`:fmt(e.date);
+const evTitle=e=>e.name&&e.festival?`${e.name} @ ${e.festival}`:(e.name||e.festival||('Live '+(e.city?'a '+e.city:fmt(e.date))));
 const place=e=>uniq([e.venue,e.city].filter(Boolean)).join(' · ');
 const yearOf=e=>(e.date||'').slice(0,4);
 const jload=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
@@ -398,7 +410,7 @@ function toast(m,t=''){const d=document.createElement('div');d.textContent=m;if(
 /* ============ stato & persistenza ============ */
 let DB=jload('ac_data',{events:[],stickers:[]});
 let CFG=Object.assign({owner:'olivieridomenicopodcast',repo:'Album-concerti',branch:'ccr-d6c8e450-is4c8a',token:'',lastCommit:'',dirty:false},jload('ac_cfg',{}));
-const F=Object.assign({q:'',sort:'date-desc',status:'',year:'',city:'',event:'',band:'',comp:'',view:'grid',bsort:'date-asc'},jload('ac_filters',{}));
+const F=Object.assign({q:'',sort:'date-desc',status:'',year:'',city:'',event:'',band:'',comp:'',festival:'',tour:'',view:'grid',bsort:'date-asc'},jload('ac_filters',{}));
 const saveCfg=()=>jsave('ac_cfg',CFG);
 /* ============ preferenze, skin, suoni ============ */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -517,7 +529,7 @@ function cardHTML(it){
     <div class="meta"><h3>${esc(st.band)}</h3>
       <div class="s">📅 ${esc(evDate(ev))}</div>
       ${place(ev)?`<div class="s">📍 ${esc(place(ev))}</div>`:''}
-      <span class="tag" data-tag="${esc(ev.id)}" title="Filtra per questo concerto/festival">🏷 ${esc(ev.name)}</span>
+      <span class="tag" data-tag="${esc(ev.id)}" title="Filtra per questo concerto/festival">🏷 ${esc(evTitle(ev))}</span>
     </div></div></article>`;
 }
 function bindCards(root,onTag){
@@ -534,7 +546,7 @@ function lightbox(sid){
      <h2>${esc(st.band)}</h2>
      <div>📅 ${esc(evDate(ev))}</div>
      ${place(ev)?`<div>📍 ${esc(place(ev))}</div>`:''}
-     <div>🏷 <b>${esc(ev.name)}</b></div>
+     <div>🏷 <b>${esc(evTitle(ev))}</b></div>
      <div style="color:var(--mut)">${it.seen?`Visti <b style="color:var(--b)">${it.seen}</b> ${plural(it.seen,'volta','volte')}`:'Non ancora visti dal vivo'}</div>
      <div class="actions">
        <button class="btn pri" data-a="open">Apri</button>
@@ -551,7 +563,9 @@ function lightbox(sid){
 
 /* ============ form figurina / concerto ============ */
 function eventFields(ev={}){
-  return `<label>Nome concerto / festival *</label><input name="name" required value="${esc(ev.name||'')}" placeholder="es. Hellfest 2026">
+  return `<label>Nome concerto / tour</label><input name="name" list="dl-evname" value="${esc(ev.name||'')}" placeholder="es. Exuvia Estate Tour">
+  <label>Festival (se era dentro un festival)</label><input name="festival" list="dl-fest" value="${esc(ev.festival||'')}" placeholder="es. Bamboo Festival">
+  <div style="color:var(--mut);font-size:12px;margin-top:3px">Basta compilare uno dei due: se manca il festival, lascialo vuoto.</div>
   <div class="r2"><div><label>Data (inizio) *</label><input type="date" name="date" value="${esc(ev.date||'')}"></div>
   <div><label>Data fine (se più giorni)</label><input type="date" name="endDate" value="${esc(ev.endDate||'')}"></div></div>
   <div class="r2"><div><label>Luogo / locale</label><input name="venue" list="dl-venue" value="${esc(ev.venue||'')}" placeholder="es. Palazzo dello Sport"></div>
@@ -562,12 +576,13 @@ function eventFields(ev={}){
 function readEvent(root,base={}){
   const g=n=>$(`[name=${n}]`,root).value.trim();
   const d=g('date');
-  return Object.assign(base,{name:g('name'),date:d,endDate:g('endDate')&&g('endDate')>d?g('endDate'):'',venue:g('venue'),city:g('city'),
+  return Object.assign(base,{name:g('name'),festival:g('festival'),date:d,endDate:g('endDate')&&g('endDate')>d?g('endDate'):'',venue:g('venue'),city:g('city'),
     companions:g('companions').split(',').map(s=>s.trim()).filter(Boolean),notes:g('notes')});
 }
 function datalists(){
   const ev=DB.events;
   return `<datalist id="dl-band">${distinctSorted(DB.stickers.map(s=>s.band)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
+  <datalist id="dl-fest">${distinctSorted(ev.map(e=>e.festival)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
   <datalist id="dl-evname">${distinctSorted(ev.map(e=>e.name)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
   <datalist id="dl-venue">${distinctSorted(ev.map(e=>e.venue)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
   <datalist id="dl-city">${distinctSorted(ev.map(e=>e.city)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>
@@ -590,7 +605,7 @@ function stickerForm(sid,presetEvent=''){
     </div>
     <label>Concerto / festival (tag) *</label>
     <select name="eventId"><option value="__new">＋ Nuovo concerto / festival…</option>
-      ${evs.map(e=>`<option value="${e.id}" ${e.id===sel?'selected':''}>${esc(e.name)} — ${esc(fmt(e.date))}${e.city?' ('+esc(e.city)+')':''}</option>`).join('')}</select>
+      ${evs.map(e=>`<option value="${e.id}" ${e.id===sel?'selected':''}>${esc(evTitle(e))} — ${esc(fmt(e.date))}${e.city?' ('+esc(e.city)+')':''}</option>`).join('')}</select>
     <div class="newev" id="newev" hidden>${eventFields({})}</div>
     <div id="evinfo" style="color:var(--mut);font-size:13px;margin-top:6px"></div>
     ${sid?'':`<label class="chk"><input type="checkbox" id="again"> Salva e aggiungi un'altra band dello stesso concerto</label>`}
@@ -601,7 +616,7 @@ function stickerForm(sid,presetEvent=''){
   let newPhoto=null,newSt=null;
   if(st.photo)photoURL(st.photo).then(u=>{if(u&&!newPhoto)$('#prev',el).src=u});
   const syncEv=()=>{const isNew=selEl.value==='__new';newev.hidden=!isNew;
-    $$('[name=name],[name=date]',newev).forEach(i=>i.required=isNew);
+    $$('[name=date]',newev).forEach(i=>i.required=isNew);
     const e=DB.events.find(x=>x.id===selEl.value);
     $('#evinfo',el).textContent=e?`📅 ${evDate(e)}${place(e)?'  📍 '+place(e):''}${e.companions?.length?'  👥 '+e.companions.join(', '):''}`:''};
   selEl.onchange=syncEv;syncEv();
@@ -614,7 +629,7 @@ function stickerForm(sid,presetEvent=''){
     let eventId=selEl.value;
     if(eventId==='__new'){
       const ne=readEvent(newev,{id:uid()});
-      if(!ne.name||!ne.date){toast('Servono nome e data del concerto','err');return}
+      if((!ne.name&&!ne.festival)||!ne.date){toast('Servono data e nome del concerto o del festival','err');return}
       DB.events.push(ne);eventId=ne.id;
     }
     let photo=st.photo||null;const oldPhoto=photo;
@@ -644,10 +659,10 @@ function eventForm(id){
     <div class="acts"><button type="button" class="btn dan" id="del">Elimina</button><span class="sp"></span>
     <button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Salva</button></div></form>`);
   $('#del',el).onclick=()=>{const n=DB.stickers.filter(s=>s.eventId===id).length;
-    if(!confirm(`Eliminare "${ev.name}"${n?` e le sue ${n} figurine`:''}?`))return;
+    if(!confirm(`Eliminare "${evTitle(ev)}"${n?` e le sue ${n} figurine`:''}?`))return;
     DB.stickers.filter(s=>s.eventId===id).forEach(s=>removeSticker(s.id));
     DB.events=DB.events.filter(e=>e.id!==id);touch();el.close();location.hash='#/album';toast('Concerto eliminato')};
-  $('form',el).onsubmit=e=>{e.preventDefault();readEvent(el,ev);if(!ev.name||!ev.date){toast('Servono nome e data','err');return}touch();el.close();route();toast('Salvato','ok')};
+  $('form',el).onsubmit=e=>{e.preventDefault();readEvent(el,ev);if((!ev.name&&!ev.festival)||!ev.date){toast('Servono data e nome del concerto o del festival','err');return}touch();el.close();route();toast('Salvato','ok')};
 }
 
 /* ============ filtri condivisi (album sfogliabile + collezione) ============ */
@@ -657,12 +672,14 @@ function applyFilters(arr,sortKey){
     if(F.year&&yearOf(x.ev)!==F.year)return false;
     if(F.city&&x.ev.city!==F.city)return false;
     if(F.event&&x.ev.id!==F.event)return false;
+    if(F.festival&&x.ev.festival!==F.festival)return false;
+    if(F.tour&&x.ev.name!==F.tour)return false;
     if(F.band&&x.key!==F.band)return false;
     if(F.comp&&!(x.ev.companions||[]).includes(F.comp))return false;
-    if(q&&!norm([x.st.band,x.ev.name,x.ev.city,x.ev.venue,(x.ev.companions||[]).join(' ')].join(' ')).includes(q))return false;
+    if(q&&!norm([x.st.band,x.ev.name,x.ev.festival,x.ev.city,x.ev.venue,(x.ev.companions||[]).join(' ')].join(' ')).includes(q))return false;
     return true});
   const byBand=(a,b)=>a.st.band.localeCompare(b.st.band,'it');
-  const byDate=(a,b)=>(a.ev.date||'').localeCompare(b.ev.date||'')||byBand(a,b);
+  const byDate=(a,b)=>(a.ev.date||'').localeCompare(b.ev.date||'')||evTitle(a.ev).localeCompare(evTitle(b.ev),'it')||byBand(a,b);
   const S={'date-desc':(a,b)=>byDate(b,a),'date-asc':byDate,'az':byBand,'za':(a,b)=>byBand(b,a),'seen':(a,b)=>b.seen-a.seen||byBand(a,b)};
   return r.sort(S[sortKey]||S['date-asc']);
 }
@@ -671,20 +688,23 @@ function filterBar(mode){
   const all=items(),le=liveEvents();
   const years=distinctSorted(le.map(yearOf)).reverse().map(y=>[y,y]);
   const cities=distinctSorted(le.map(e=>e.city)).map(c=>[c,c]);
-  const evs=[...le].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>[e.id,`${e.name} (${yearOf(e)})`]);
+  const evs=[...le].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>[e.id,`${evTitle(e)} (${yearOf(e)})`]);
   const bandMap=new Map();all.forEach(x=>bandMap.set(x.key,x.st.band));
   const bands=[...bandMap].sort((a,b)=>a[1].localeCompare(b[1],'it'));
   const comps=distinctSorted(le.flatMap(e=>e.companions||[])).map(c=>[c,c]);
+  const fests=distinctSorted(le.map(e=>e.festival)).map(c=>[c,c]),tours=distinctSorted(le.map(e=>e.name)).map(c=>[c,c]);
   return `<div class="toolbar">
     <input type="search" id="fq" placeholder="🔍 Cerca band, concerto, città…" value="${esc(F.q)}">
     <select id="fsort"><option value="date-asc">Cronologico (vecchi prima)</option><option value="date-desc">Più recenti prima</option><option value="az">A → Z</option><option value="za">Z → A</option><option value="seen">Più visti</option></select>
     ${mode==='book'?`<select id="fskin" title="Skin dell'album">${Object.entries(SKINS).map(([k,s])=>`<option value="${k}" ${k===PREF.skin?'selected':''}>🎨 ${esc(s.n)}</option>`).join('')}</select>`
-      :`<div class="seg" id="fview"><button data-v="grid">▦ Figurine</button><button data-v="list">☰ Lista</button></div>`}
+      :`<div class="seg" id="fview"><button data-v="grid">▦ Figurine</button><button data-v="list">☰ Lista</button><button data-v="group">☷ Per concerto</button></div>`}
   </div>
   <div class="toolbar">
     <select id="fyear">${opts(years,F.year,'Anno')}</select>
     <select id="fcity">${opts(cities,F.city,'Città')}</select>
-    <select id="fevent">${opts(evs,F.event,'Concerto / festival')}</select>
+    <select id="fevent" title="Una singola serata: mostra tutte le band di quel concerto">${opts(evs,F.event,'Serata (concerto)')}</select>
+    <select id="ffest">${opts(fests,F.festival,'Festival')}</select>
+    <select id="ftour">${opts(tours,F.tour,'Tour / concerto')}</select>
     <select id="fband">${opts(bands,F.band,'Band')}</select>
     <select id="fcomp">${opts(comps,F.comp,'Con chi')}</select>
     <button class="btn sm" id="freset">Azzera filtri</button>
@@ -694,10 +714,10 @@ function bindFilterBar(mode,upd,rerender){
   const sk=mode==='book'?'bsort':'sort';
   $('#fsort').value=F[sk];
   const bind=(id,k)=>$(id).oninput=e=>{F[k]=e.target.value;jsave('ac_filters',F);upd()};
-  bind('#fq','q');bind('#fsort',sk);bind('#fyear','year');bind('#fcity','city');bind('#fevent','event');bind('#fband','band');bind('#fcomp','comp');
+  bind('#fq','q');bind('#fsort',sk);bind('#fyear','year');bind('#fcity','city');bind('#fevent','event');bind('#ffest','festival');bind('#ftour','tour');bind('#fband','band');bind('#fcomp','comp');
   if(mode==='book')$('#fskin').onchange=e=>{PREF.skin=e.target.value;savePref();applySkin();renderBook()};
   else $$('#fview button').forEach(b=>b.onclick=()=>{F.view=b.dataset.v;jsave('ac_filters',F);upd()});
-  $('#freset').onclick=()=>{Object.assign(F,{q:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);rerender()};
+  $('#freset').onclick=()=>{Object.assign(F,{q:'',year:'',city:'',event:'',festival:'',tour:'',band:'',comp:''});jsave('ac_filters',F);rerender()};
 }
 
 /* ============ vista: collezione (griglia) ============ */
@@ -713,8 +733,14 @@ function updateGrid(){
   if(!all.length){g.innerHTML=`<div class="empty"><h2>Il tuo album è vuoto 🎟️</h2><p>Premi <b>＋ Figurina</b> o <b>📦 Inserimento rapido</b> per aggiungere i concerti.</p></div>`;$('#summary').textContent='';return}
   const evCount=new Set(list.map(x=>x.ev.id)).size;
   $('#summary').textContent=`${list.length} ${plural(list.length,'figurina','figurine')} · ${evCount} ${plural(evCount,'concerto/festival','concerti/festival')}`;
+  if(F.view==='group'&&list.length){
+    const groups=new Map();list.forEach(x=>{if(!groups.has(x.ev.id))groups.set(x.ev.id,[]);groups.get(x.ev.id).push(x)});
+    g.className='';
+    g.innerHTML=[...groups].map(([id,arr])=>{const e=arr[0].ev;
+      return `<section class="gsec"><div class="ghead"><h3><a href="#/event/${esc(id)}">${esc(evTitle(e))}</a></h3><div class="kv"><span>📅 <b>${esc(evDate(e))}</b></span>${place(e)?`<span>📍 <b>${esc(place(e))}</b></span>`:''}<span>🎤 <b>${arr.length}</b> ${plural(arr.length,'band','band')}</span>${e.companions?.length?`<span>👥 ${esc(e.companions.join(', '))}</span>`:''}</div></div><div class="grid">${arr.map(cardHTML).join('')}</div></section>`}).join('');
+  }else{
   g.className='grid'+(F.view==='list'?' list':'');
-  g.innerHTML=list.length?list.map(cardHTML).join(''):`<div class="empty" style="grid-column:1/-1"><h2>Nessun risultato</h2></div>`;
+  g.innerHTML=list.length?list.map(cardHTML).join(''):`<div class="empty" style="grid-column:1/-1"><h2>Nessun risultato</h2></div>`;}
   $$('.card',g).forEach((c,i)=>c.style.setProperty('--i',Math.min(i,24)));
   bindCards(g,id=>{F.event=id;jsave('ac_filters',F);renderCollection()});
   hydrate(g);
@@ -743,7 +769,7 @@ function slotHTML(it,num,align){
       <div class="ini">${esc(initials(st.band))}</div>${st.photo?`<img data-photo="${esc(st.photo)}" alt="${esc(st.band)}">`:''}
       <span class="snum">#${pad(num)}</span>${it.seen?`<span class="scnt">${it.seen}×</span>`:''}${it.future?'<span class="sfut">PROSSIMAMENTE</span>':''}
     </div>
-    <div class="cap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(ev))}</span>${place(ev)?`<span>📍 ${esc(place(ev))}</span>`:''}<a class="tg" href="#/event/${esc(ev.id)}">🏷 ${esc(ev.name)}</a><a class="edev" data-editev="${esc(ev.id)}" title="Modifica concerto">✏️ modifica</a></div>
+    <div class="cap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(ev))}</span>${place(ev)?`<span>📍 ${esc(place(ev))}</span>`:''}<a class="tg" href="#/event/${esc(ev.id)}" data-fev="${esc(ev.id)}" title="Mostra solo le band di questa serata">🏷 ${esc(evTitle(ev))}</a><a class="edev" data-editev="${esc(ev.id)}" title="Modifica concerto">✏️ modifica</a></div>
   </div>`;
 }
 function pageHTML(pg,side){
@@ -795,6 +821,7 @@ function bindBook(){
   const bk=$('#bk');
   $$('[data-open]',bk).forEach(e=>e.onclick=()=>lightbox(e.dataset.open));
   $$('[data-editev]',bk).forEach(e=>e.onclick=()=>eventForm(e.dataset.editev));
+  $$('[data-fev]',bk).forEach(a=>a.onclick=e=>{e.preventDefault();F.event=a.dataset.fev;jsave('ac_filters',F);B.p=0;renderBookView()});
   $$('.pg',bk).forEach(p=>p.addEventListener('click',e=>{
     if(e.target.closest('.sticker,a'))return;
     if(p.classList.contains('cover')&&!p.classList.contains('back')){flip(1);return}
@@ -851,7 +878,7 @@ function renderEvent(id){
   if(!ev){$('#view').innerHTML='<div class="empty"><h2>Concerto non trovato</h2><a href="#/album">← Album</a></div>';return}
   const lineup=evLineup(id);const fut=ev.date>todayISO();
   $('#view').innerHTML=`<a class="back" href="#/album">← Album</a>
-  <div class="hero"><div><small style="color:var(--mut)">✅ ci sono stato</small><h1>${esc(ev.name)}</h1></div><span class="sp"></span>
+  <div class="hero"><div><small style="color:var(--mut)">✅ ci sono stato</small><h1>${esc(evTitle(ev))}</h1></div><span class="sp"></span>
     <button class="btn" id="eEdit">Modifica</button><button class="btn pri" id="eAdd">＋ Aggiungi band</button></div>
   <div class="kv"><span>📅 <b>${esc(evDate(ev))}</b></span>${place(ev)?`<span>📍 <b>${esc(place(ev))}</b></span>`:''}<span>🎤 <b>${lineup.length}</b> ${plural(lineup.length,'band','band')}</span></div>
   <div class="panel"><h2>Band della serata</h2>${lineup.length?`<div class="mini">${lineup.map(cardHTML).join('')}</div>`:'<span style="color:var(--mut)">Ancora nessuna band: aggiungine una!</span>'}</div>
@@ -877,7 +904,7 @@ function renderBand(key){
     <div class="tile"><b style="font-size:20px">${esc(fmt(asc[asc.length-1].ev.date))}</b><span>ultima volta</span></div>`:''}
   </div>
   <div class="panel"><h2>Figurine</h2><div class="mini">${its.map(cardHTML).join('')}</div></div>
-  <div class="panel"><h2>Cronologia concerti</h2><ul class="tl">${its.map(x=>`<li><span><a href="#/event/${x.ev.id}"><b>${esc(x.ev.name)}</b></a> ${x.future?'<span class="chip">prossimamente</span>':''}</span><span style="color:var(--mut)">${esc(evDate(x.ev))}${place(x.ev)?' · '+esc(place(x.ev)):''}</span></li>`).join('')}</ul></div>`;
+  <div class="panel"><h2>Cronologia concerti</h2><ul class="tl">${its.map(x=>`<li><span><a href="#/event/${x.ev.id}"><b>${esc(evTitle(x.ev))}</b></a> ${x.future?'<span class="chip">prossimamente</span>':''}</span><span style="color:var(--mut)">${esc(evDate(x.ev))}${place(x.ev)?' · '+esc(place(x.ev)):''}</span></li>`).join('')}</ul></div>`;
   $('#bAdd2').onclick=()=>{stickerForm();setTimeout(()=>{const i=$('.modal [name=band]');if(i)i.value=name},0)};
   $('#bRen').onclick=()=>{const n=prompt('Nuovo nome per questa band (vale per tutte le sue figurine):',name);
     if(!n||!n.trim()||n.trim()===name)return;DB.stickers.forEach(s=>{if(norm(s.band)===key)s.band=n.trim()});touch();location.hash='#/band/'+encodeURIComponent(norm(n))};
@@ -947,7 +974,7 @@ function renderStats(){
     ${last?li(`⏱️ Ultimo concerto: <b>${esc(fmt(last))}</b> — sono passati <b>${-dd(last)}</b> giorni`):''}
     ${dates.length?li(`🥇 Primo concerto registrato: <b>${esc(fmt(dates[0]))}</b>`):''}
     ${bestYear?li(`🏆 Anno record: <b>${bestYear[0]}</b> con <b>${bestYear[1]}</b> concerti`):''}
-    ${biggest&&biggest[1]?li(`🎪 Serata con più band: <b>${esc(DB.events.find(e=>e.id===biggest[0]).name)}</b> (<b>${biggest[1]}</b> band)`):''}
+    ${biggest&&biggest[1]?li(`🎪 Serata con più band: <b>${esc(evTitle(DB.events.find(e=>e.id===biggest[0])))}</b> (<b>${biggest[1]}</b> band)`):''}
     ${li(`🎤 Media di <b>${avg}</b> band a concerto · <b>${festivals}</b> ${plural(festivals,'serata','serate')} da 4+ band (stile festival)`)}
     ${perBand.size?li(`🔁 Band viste una sola volta: <b>${once}</b> · fedelissime (3+ volte): <b>${loyal}</b>`):''}
     ${roamer&&roamer[1].size>1?li(`🧳 Band inseguita in più città: <b>${esc(names.get(roamer[0]))}</b> in <b>${roamer[1].size}</b> città`):''}
@@ -1076,8 +1103,9 @@ function renderRandom(){
     <button class="rbtn" data-m="event"><i>🎪</i><b>Concerto a caso</b><span>Tutte le figurine di quella serata</span></button>
     <button class="rbtn" data-m="band"><i>🎤</i><b>Band a caso</b><span>Una band, in uno dei suoi concerti</span></button>
     <button class="rbtn" data-m="sticker"><i>🃏</i><b>Figurina a caso</b><span>Una sola, pescata dal mazzo</span></button>
+    <button class="rbtn" data-m="packs"><i>📦</i><b>Pacchetti a caso</b><span>Scegli quante figurine, poi aprili!</span></button>
   </div><div id="rstage"></div>`;
-  $$('.rbtn').forEach(b=>b.onclick=()=>rollRandom(b.dataset.m));
+  $$('.rbtn').forEach(b=>b.onclick=()=>b.dataset.m==='packs'?randomPacksForm():rollRandom(b.dataset.m));
 }
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 async function rollRandom(mode,fixed){
@@ -1085,7 +1113,7 @@ async function rollRandom(mode,fixed){
   const all=items();if(!all.length){toast('Aggiungi prima qualche concerto!','err');return}
   const stage=$('#rstage');if(!stage)return;
   let pool,label;
-  if(mode==='event'){const ids=new Set(all.map(x=>x.ev.id));pool=DB.events.filter(e=>ids.has(e.id));label=e=>e.name}
+  if(mode==='event'){const ids=new Set(all.map(x=>x.ev.id));pool=DB.events.filter(e=>ids.has(e.id));label=e=>evTitle(e)}
   else if(mode==='band'){const m=new Map();all.forEach(x=>m.set(x.key,x.st.band));pool=[...m];label=b=>b[1]}
   else{pool=all;label=x=>x.st.band}
   const id=o=>mode==='event'?o.id:mode==='band'?o[0]:o.st.id;
@@ -1109,7 +1137,7 @@ async function rollRandom(mode,fixed){
 function randomActions(extra=''){return `<div class="ract">${extra}<button class="btn pri" id="rAgain">🎲 Un altro!</button></div>`}
 function showRandomEvent(e,stage){
   const lineup=evLineup(e.id);
-  stage.innerHTML=`<div class="rres"><div class="rhead"><small>🎪 Il concerto fortunato</small><h2>${esc(e.name)}</h2>
+  stage.innerHTML=`<div class="rres"><div class="rhead"><small>🎪 Il concerto fortunato</small><h2>${esc(evTitle(e))}</h2>
     <div class="kv"><span>📅 <b>${esc(evDate(e))}</b></span>${place(e)?`<span>📍 <b>${esc(place(e))}</b></span>`:''}<span>🎤 <b>${lineup.length}</b> ${plural(lineup.length,'band','band')}</span></div>
     ${e.companions?.length?e.companions.map(c=>`<span class="chip">👥 ${esc(c)}</span>`).join(''):''}</div>
     <div class="grid rgrid">${lineup.map(cardHTML).join('')}</div>
@@ -1130,7 +1158,7 @@ function showRandomSticker(it,stage,title,mode,its){
   stage.innerHTML=`<div class="rres"><div class="rhead"><small>${title}</small><h2>${esc(st.band)}</h2>
     <div class="kv"><span>👁 visti <b>${it.seen}</b> ${plural(it.seen,'volta','volte')}</span>${asc.length>1?`<span>dal <b>${esc(fmt(asc[0]))}</b> al <b>${esc(fmt(asc[asc.length-1]))}</b></span>`:''}</div></div>
     <div class="rband"><div class="rbig">${cardHTML(it)}</div>
-      <div class="rside"><small style="color:var(--mut)">Quella sera</small><h3>${esc(ev.name)}</h3>
+      <div class="rside"><small style="color:var(--mut)">Quella sera</small><h3>${esc(evTitle(ev))}</h3>
         <div class="kv" style="margin:4px 0 8px"><span>📅 <b>${esc(evDate(ev))}</b></span>${place(ev)?`<span>📍 <b>${esc(place(ev))}</b></span>`:''}</div>
         ${ev.companions?.length?`<div>${ev.companions.map(c=>`<span class="chip">👥 ${esc(c)}</span>`).join('')}</div>`:''}
         ${others.length?`<small style="color:var(--mut);display:block;margin:10px 0 6px">Sul palco anche…</small><div class="mini">${others.map(cardHTML).join('')}</div>`:'<small style="color:var(--mut)">Nessun\'altra band registrata per questa serata.</small>'}
@@ -1141,6 +1169,101 @@ function showRandomSticker(it,stage,title,mode,its){
   $('#rAgain',stage).onclick=()=>rollRandom(mode);
   if($('#rSame',stage))$('#rSame',stage).onclick=()=>{const o=its.filter(x=>x.st.id!==st.id);showRandomSticker(pick(o),stage,title,mode,its)};
   bindCards(stage);hydrate(stage);
+}
+
+
+/* ===== pacchetti a caso ===== */
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function buildRandomPacks(mode,x,n){
+  const all=items(),packs=[];
+  if(mode==='sticker'){
+    const pool=shuffle(all);
+    for(let i=0;i<n&&pool.length;i++){const take=[];while(take.length<x&&pool.length)take.push(pool.pop());packs.push(take)}
+  }else{
+    const m=new Map();
+    all.forEach(it=>{const k=mode==='event'?it.ev.id:(it.ev.festival?'f:'+norm(it.ev.festival):null);if(!k)return;if(!m.has(k))m.set(k,[]);m.get(k).push(it)});
+    const units=shuffle([...m.values()]);
+    for(let i=0;i<n&&units.length;i++){const take=[];while(take.length<x&&units.length)take.push(...units.pop());
+      take.sort((a,b)=>(a.ev.date||'').localeCompare(b.ev.date||'')||a.st.band.localeCompare(b.st.band,'it'));packs.push(take)}
+  }
+  return packs.map(sts=>({id:'rp'+uid(),sts,opened:false}));
+}
+function randomPacksForm(){
+  const all=items();if(!all.length){toast('Aggiungi prima qualche concerto!','err');return}
+  const nFest=new Set(all.filter(x=>x.ev.festival).map(x=>norm(x.ev.festival))).size;
+  const el=modal(`<button class="x" data-close>✕</button><form class="f"><h2>📦 Pacchetti a caso</h2>
+    <p style="color:var(--mut);margin:4px 0">Crea pacchetti pescando dalle figurine già nel tuo album.</p>
+    <label>Cosa c'è dentro</label>
+    <select id="rpMode"><option value="sticker">Band singole, da concerti diversi</option><option value="event">Concerti interi (tutte le band di una serata)</option><option value="festival" ${nFest?'':'disabled'}>Festival interi ${nFest?'':'(nessun festival inserito)'}</option></select>
+    <div class="r2"><div><label>Figurine per pacchetto</label><input type="number" id="rpX" min="1" max="50" value="5"></div>
+    <div><label>Quanti pacchetti</label><input type="number" id="rpN" min="1" max="30" value="3"></div></div>
+    <p class="hint" id="rpHint" style="font-size:13px"></p>
+    <div class="acts"><button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Crea pacchetti</button></div></form>`);
+  const hint=()=>{const m=$('#rpMode',el).value,x=+$('#rpX',el).value||5;
+    $('#rpHint',el).textContent=m==='sticker'?`Ogni pacchetto avrà esattamente ${x} figurine pescate a caso.`
+      :`Ogni pacchetto contiene ${m==='event'?'concerti':'festival'} interi, aggiunti finché si arriva ad almeno ${x} figurine: alcuni pacchetti possono averne di più.`};
+  $('#rpMode',el).onchange=hint;$('#rpX',el).oninput=hint;hint();
+  $('form',el).onsubmit=e=>{e.preventDefault();
+    const mode=$('#rpMode',el).value,x=Math.max(1,+$('#rpX',el).value||1),n=Math.max(1,+$('#rpN',el).value||1);
+    const packs=buildRandomPacks(mode,x,n);
+    if(!packs.length){toast('Non ci sono abbastanza figurine','err');return}
+    if(packs.length<n)toast(`Ho potuto creare solo ${packs.length} pacchetti`,'ok');
+    RND.packs=packs;RND.pmode=mode;el.close();renderRandomPacks();
+    $('#rstage').scrollIntoView({block:'start',behavior:PREF.anim?'smooth':'instant'});
+  };
+}
+function renderRandomPacks(){
+  const stage=$('#rstage');if(!stage||!RND.packs)return;
+  const left=RND.packs.filter(p=>!p.opened).length;
+  stage.innerHTML=`<div class="rres"><div class="rhead"><small>📦 Pacchetti a caso</small><h2>${left?'Scegli un pacchetto!':'Tutti aperti!'}</h2></div>
+    <div class="packs" style="margin-top:14px">${RND.packs.map((p,i)=>p.opened
+      ?`<div class="rpdone"><small>Pacchetto ${i+1} · ${p.sts.length} ${plural(p.sts.length,'figurina','figurine')}</small><div class="minirow">${p.sts.map(it=>`<span class="trt" style="--g:${grad(it.st.band)}" data-open="${it.st.id}" title="${esc(it.st.band)}"><b>${esc(initials(it.st.band))}</b>${it.st.photo?`<img data-photo="${esc(it.st.photo)}" alt="">`:''}</span>`).join('')}</div></div>`
+      :packHTML(p.id,p.sts.length,i)).join('')}</div>
+    <div class="ract"><button class="btn pri" id="rpNew">📦 Nuovi pacchetti</button></div></div>`;
+  $$('.packw',stage).forEach(el=>el.onclick=()=>openRandomPack(RND.packs.find(p=>p.id===el.dataset.pack)));
+  $$('[data-open]',stage).forEach(e=>e.onclick=()=>lightbox(e.dataset.open));
+  $('#rpNew',stage).onclick=randomPacksForm;hydrate(stage);
+}
+async function openRandomPack(pk){
+  if(!pk||RND.busy)return;
+  RND.busy=true;closeAll();
+  if(!PREF.anim){pk.opened=true;RND.busy=false;renderRandomPacks();return}
+  const ov=document.createElement('div');ov.className='pk';
+  ov.innerHTML=`<button class="btn sm pk-skip">Salta animazione ⏭</button><div class="pk-stage"></div><div class="pk-msg"></div><div class="pk-tray"></div>`;
+  document.body.appendChild(ov);
+  const stage=$('.pk-stage',ov),msg=$('.pk-msg',ov),tray=$('.pk-tray',ov),total=pk.sts.length;
+  let skip=false,abort;const aborted=new Promise(r=>abort=r);
+  const waitClick=el=>Promise.race([new Promise(r=>el.addEventListener('click',r,{once:true})),aborted]);
+  $('.pk-skip',ov).onclick=()=>{skip=true;abort()};
+  stage.innerHTML=`<div class="pack3 float"><div class="pk-top"></div><div class="pk-main"><span class="pk-star">✦</span><div class="pk-ico">${SKIN_ICON[PREF.skin]||'🤘'}</div><b>${esc(SKINS[PREF.skin].n.toUpperCase())}</b><small>PACK CONCERTI</small><em>${total} ${plural(total,'figurina','figurine')}</em></div><div class="pk-btm"></div><span class="pk-shine"></span></div><div class="pk-burst"></div>`;
+  const pkEl=$('.pack3',stage);msg.textContent='Tocca il pacchetto per aprirlo!';
+  await waitClick(pkEl);
+  if(!skip){msg.textContent='';pkEl.classList.remove('float');pkEl.classList.add('shake');sfx('pop');await sleep(680);
+    if(!skip){sfx('rip');pkEl.classList.add('tear');$('.pk-burst',stage).classList.add('go');await sleep(650)}
+    if(!skip){pkEl.classList.add('gone');sfx('chime');await sleep(500)}}
+  for(let i=0;i<total&&!skip;i++){
+    const it=pk.sts[i],st=it.st;
+    stage.innerHTML=`<div class="pk-count">${i+1} / ${total}</div><div class="pk-badge">🔁 Visti ${it.seen} ${plural(it.seen,'volta','volte')}</div>
+      <div class="bigst" style="--g:${grad(st.band)}"><div class="bigin"><div class="ini">${esc(initials(st.band))}</div>${st.photo?`<img data-photo="${esc(st.photo)}" alt="">`:''}</div><div class="film"><i class="fshine"></i></div></div>
+      <div class="bigcap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(it.ev))}${place(it.ev)?' · 📍 '+esc(place(it.ev)):''}</span><span class="tag">🏷 ${esc(evTitle(it.ev))}</span></div>`;
+    hydrate(stage);sfx('pop');await sleep(600);if(skip)break;
+    const big=$('.bigst',stage);msg.textContent='Tocca la figurina per staccare la pellicola';
+    await waitClick(big);if(skip)break;
+    msg.textContent='';big.classList.add('peel');sfx('peel');await sleep(950);
+    $('.film',big)?.remove();await sleep(350);if(skip)break;
+    const a=big.animate([{transform:'none',opacity:1},{transform:'translateY(36vh) scale(.2)',opacity:0}],{duration:500,easing:'ease-in',fill:'forwards'});
+    $('.bigcap',stage).style.opacity=0;await a.finished.catch(()=>{});
+    tray.insertAdjacentHTML('beforeend',`<span class="trt" style="--g:${grad(st.band)}"><b>${esc(initials(st.band))}</b>${st.photo?`<img data-photo="${esc(st.photo)}" alt="">`:''}</span>`);hydrate(tray);sfx('slap');
+  }
+  tray.remove();$('.pk-skip',ov).remove();msg.textContent='';
+  stage.classList.add('sum');
+  stage.innerHTML=`<div class="pk-count">Pacchetto aperto! 🎉</div><div class="grid pk-sum">${pk.sts.map(cardHTML).join('')}</div><button class="btn pri" id="pkClose">Chiudi</button>`;
+  $$('.card',stage).forEach((c,i)=>c.style.setProperty('--i',Math.min(i,12)));hydrate(stage);
+  if(!skip){sfx('chime');confetti()}
+  $$('[data-open]',stage).forEach(e=>e.onclick=()=>{close();lightbox(e.dataset.open)});
+  $$('[data-tag]',stage).forEach(e=>e.onclick=ev=>{ev.stopPropagation();close();go('#/event/'+e.dataset.tag)});
+  function close(){ov.remove();pk.opened=true;RND.busy=false;renderRandomPacks()}
+  $('#pkClose',stage).onclick=close;
 }
 
 /* ============ router ============ */
@@ -1199,7 +1322,7 @@ async function openPack(packId){
   const order=DB.stickers.filter(s=>s.pending&&s.pack===packId).sort((a,b)=>(evOf(a).date||'').localeCompare(evOf(b).date||''));
   if(!order.length)return true;
   closeAll();
-  Object.assign(F,{q:'',year:'',city:'',event:'',band:'',comp:''});jsave('ac_filters',F);
+  Object.assign(F,{q:'',year:'',city:'',event:'',festival:'',tour:'',band:'',comp:''});jsave('ac_filters',F);
   if(CUR!=='album'){history.replaceState(null,'','#/album');route(true)}
   const pasteNow=sts=>{sts.forEach(s=>{s.pending=false;delete s.pack});touch()};
   if(!PREF.anim){pasteNow(order);toast(`${order.length} figurine incollate`,'ok');route();return true}
@@ -1227,7 +1350,7 @@ async function openPack(packId){
     const badge=it.isNew?'✨ NUOVA BAND!':it.future?'🎟️ PROSSIMAMENTE':`🔁 Già vista ${it.seen} ${plural(it.seen,'volta','volte')}`;
     stage.innerHTML=`<div class="pk-count">${i+1} / ${total}</div><div class="pk-badge ${it.isNew?'new':''}">${badge}</div>
       <div class="bigst" style="--g:${grad(st.band)}"><div class="bigin"><div class="ini">${esc(initials(st.band))}</div>${st.photo?`<img data-photo="${esc(st.photo)}" alt="">`:''}</div><div class="film"><i class="fshine"></i></div></div>
-      <div class="bigcap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(it.ev))}${place(it.ev)?' · 📍 '+esc(place(it.ev)):''}</span><span class="tag">🏷 ${esc(it.ev.name)}</span></div>`;
+      <div class="bigcap"><b>${esc(st.band)}</b><span>📅 ${esc(evDate(it.ev))}${place(it.ev)?' · 📍 '+esc(place(it.ev)):''}</span><span class="tag">🏷 ${esc(evTitle(it.ev))}</span></div>`;
     hydrate(stage);sfx('pop');await sleep(600);
     if(skip)break;
     const big=$('.bigst',stage);msg.textContent='Tocca la figurina per staccare la pellicola';
@@ -1278,17 +1401,18 @@ function bulkForm(prefill=[]){
       <label class="chk"><input type="checkbox" id="bDirect"> Incolla subito, senza pacchetti</label></div>
     <div class="acts"><button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Crea figurine</button></div></form>`,'wide');
   const rows=$('#brows',el);let userN=false;
-  const vals=r=>({band:$('.b-band',r).value.trim(),name:$('.b-name',r).value.trim(),date:$('.b-date',r).value,venue:$('.b-venue',r).value.trim(),city:$('.b-city',r).value.trim()});
+  const vals=r=>({band:$('.b-band',r).value.trim(),name:$('.b-name',r).value.trim(),festival:$('.b-fest',r).value.trim(),date:$('.b-date',r).value,venue:$('.b-venue',r).value.trim(),city:$('.b-city',r).value.trim()});
   const upd=()=>{const n=[...rows.children].filter(r=>$('.b-band',r).value.trim()).length||1;
     if(!userN)$('#bN',el).value=Math.max(1,Math.ceil(n/5));
     const N=Math.max(1,+$('#bN',el).value||1);$('#bPer',el).textContent=`≈ ${Math.ceil(n/N)} figurine per pacchetto (${n} totali)`};
   function addRow(v={}){
     const prev=rows.lastElementChild,pv=prev?vals(prev):{};
-    const d=Object.assign({band:'',name:pv.name||'',date:pv.date||'',venue:pv.venue||'',city:pv.city||''},v);
+    const d=Object.assign({band:'',name:pv.name||'',festival:pv.festival||'',date:pv.date||'',venue:pv.venue||'',city:pv.city||''},v);
     const r=document.createElement('div');r.className='brow';
     r.innerHTML=`<label class="bph" title="Foto"><input type="file" accept="image/*" hidden><img alt=""><span>📷</span></label>
       <input class="b-band" list="dl-band" placeholder="Band *" value="${esc(d.band)}">
-      <input class="b-name" list="dl-evname" placeholder="Concerto / festival *" value="${esc(d.name)}">
+      <input class="b-name" list="dl-evname" placeholder="Concerto / tour" value="${esc(d.name)}">
+      <input class="b-fest" list="dl-fest" placeholder="Festival" value="${esc(d.festival)}">
       <input class="b-date" type="date" value="${esc(d.date)}">
       <input class="b-venue" list="dl-venue" placeholder="Locale" value="${esc(d.venue)}">
       <input class="b-city" list="dl-city" placeholder="Città" value="${esc(d.city)}">
@@ -1297,9 +1421,10 @@ function bulkForm(prefill=[]){
     if(v.blob)setBlob(v.blob);
     $('.bph input',r).onchange=async e=>{const f=e.target.files[0];if(f)try{setBlob(await resizeImage(f))}catch(err){toast(err.message,'err')}};
     $('.b-rm',r).onclick=()=>{r.remove();upd()};
-    $('.b-name',r).onchange=e=>{const nm=norm(e.target.value);if(!nm||$('.b-date',r).value)return;
-      const m=[...DB.events].filter(x=>norm(x.name)===nm).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-      if(m){$('.b-date',r).value=m.date||'';if(!$('.b-venue',r).value)$('.b-venue',r).value=m.venue||'';if(!$('.b-city',r).value)$('.b-city',r).value=m.city||''}};
+    const auto=e=>{const nm=norm(e.target.value);if(!nm||$('.b-date',r).value)return;
+      const m=[...DB.events].filter(x=>norm(x.name)===nm||norm(x.festival)===nm).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+      if(m){$('.b-date',r).value=m.date||'';if(e.target.classList.contains('b-name')&&!$('.b-fest',r).value)$('.b-fest',r).value=m.festival||'';if(!$('.b-venue',r).value)$('.b-venue',r).value=m.venue||'';if(!$('.b-city',r).value)$('.b-city',r).value=m.city||''}};
+    $('.b-name',r).onchange=auto;$('.b-fest',r).onchange=auto;
     r.addEventListener('input',e=>{r.classList.remove('bad');if(e.target.classList.contains('b-band'))upd()});
     rows.appendChild(r);upd();return r;
   }
@@ -1315,26 +1440,26 @@ function bulkForm(prefill=[]){
   };
   $('#bPaste',el).onclick=()=>{
     const m2=modal(`<button class="x" data-close>✕</button><form class="f"><h2>📋 Incolla elenco</h2>
-      <p style="color:var(--mut)">Una figurina per riga: <code>Band; Concerto/Festival; Data; Locale; Città</code><br>Data come 2025-06-20 oppure 20/06/2025. Locale e città sono facoltativi.</p>
+      <p style="color:var(--mut)">Una figurina per riga: <code>Band; Concerto/Tour; Data; Locale; Città; Festival</code><br>Data come 2025-06-20 oppure 20/06/2025. Locale, città e festival sono facoltativi.</p>
       <textarea rows="9" id="pTxt" placeholder="Gojira; Hellfest 2025; 20/06/2025; Clisson; Clisson&#10;Sepultura; Hellfest 2025; 20/06/2025"></textarea>
       <div class="acts"><button type="button" class="btn" data-close>Annulla</button><button class="btn pri">Importa</button></div></form>`);
     $('form',m2).onsubmit=ev=>{ev.preventDefault();let n=0;
       $('#pTxt',m2).value.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{const p=l.split(/\t|;|\|/).map(x=>x.trim());
         if(!p[0])return;const last=rows.lastElementChild;
         if(last&&!$('.b-band',last).value.trim()&&!last._blob)last.remove();
-        addRow({band:p[0],name:p[1]||'',date:parseDate(p[2]),venue:p[3]||'',city:p[4]||''});n++});
+        addRow({band:p[0],name:p[1]||'',date:parseDate(p[2]),venue:p[3]||'',city:p[4]||'',festival:p[5]||''});n++});
       m2.close();toast(`${n} righe importate`,'ok')};
   };
   $('form',el).onsubmit=async e=>{
     e.preventDefault();
-    const rs=[...rows.children].map(r=>({r,v:vals(r),blob:r._blob})).filter(x=>x.v.band||x.v.name||x.blob);
+    const rs=[...rows.children].map(r=>({r,v:vals(r),blob:r._blob})).filter(x=>x.v.band||x.v.name||x.v.festival||x.blob);
     if(!rs.length){toast('Nessuna riga da salvare','err');return}
-    const bad=rs.filter(x=>!x.v.band||!x.v.name||!x.v.date);
-    if(bad.length){bad.forEach(x=>x.r.classList.add('bad'));bad[0].r.scrollIntoView({block:'center'});toast(`${bad.length} righe incomplete: servono band, concerto e data`,'err');return}
+    const bad=rs.filter(x=>!x.v.band||(!x.v.name&&!x.v.festival)||!x.v.date);
+    if(bad.length){bad.forEach(x=>x.r.classList.add('bad'));bad[0].r.scrollIntoView({block:'center'});toast(`${bad.length} righe incomplete: servono band, data e concerto o festival`,'err');return}
     const direct=$('#bDirect',el).checked,created=[];
     for(const x of rs){
-      let ev=DB.events.find(e=>norm(e.name)===norm(x.v.name)&&e.date===x.v.date);
-      if(!ev){ev={id:uid(),name:x.v.name,date:x.v.date,endDate:'',venue:x.v.venue,city:x.v.city,companions:[],notes:''};DB.events.push(ev)}
+      let ev=DB.events.find(e=>norm(e.name)===norm(x.v.name)&&norm(e.festival)===norm(x.v.festival)&&e.date===x.v.date);
+      if(!ev){ev={id:uid(),name:x.v.name,festival:x.v.festival,date:x.v.date,endDate:'',venue:x.v.venue,city:x.v.city,companions:[],notes:''};DB.events.push(ev)}
       else{if(!ev.venue&&x.v.venue)ev.venue=x.v.venue;if(!ev.city&&x.v.city)ev.city=x.v.city}
       let photo=null;if(x.blob){photo=uid();await idb.put(photo,x.blob)}
       const st={id:uid(),band:x.v.band,eventId:ev.id,photo};if(!direct)st.pending=true;

@@ -23,3 +23,6 @@ Pagina **Sync**: owner, repo, branch e token (fine-grained, permesso *Contents: 
 
 ## Build e aggiornamenti
 In basso a sinistra c'è il numero di build. **↻ Aggiornamenti** controlla se online c'è una build più recente (diventa "Aggiorna alla build N" e ricarica la pagina). Prima di ogni commit si lancia `./bump-build.sh`.
+
+## Concerto e festival
+Ogni serata può avere un **nome concerto/tour** e/o un **festival** (basta uno dei due). Nell'Album e nella Collezione si può filtrare per serata, festival e tour; la Collezione ha anche la vista **☷ Per concerto**. In **Scopri → Pacchetti a caso** crei pacchetti di figurine pescate dall'album (band singole, concerti interi o festival interi).

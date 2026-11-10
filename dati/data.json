@@ -168,6 +168,24 @@
    "companions": [],
    "notes": "",
    "festival": ""
+  },
+  {
+   "id": "mwagigvsgum88",
+   "name": "Black Album Tour",
+   "festival": "",
+   "date": "2012-05-13",
+   "endDate": "",
+   "venue": "Stadio Friuli",
+   "city": "Udine",
+   "companions": [
+    "Berto",
+    "Jennifer",
+    "Brocca",
+    "Mancio",
+    "Zika",
+    "Laura Maria Giuliani"
+   ],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -352,7 +370,32 @@
    "pending": false,
    "tour": "",
    "headliner": true
+  },
+  {
+   "id": "mwagigw4cvcka",
+   "band": "Metallica",
+   "eventId": "mwagigvsgum88",
+   "photo": "mwagigvs7vc3p",
+   "tour": "Black Album Tour",
+   "headliner": true
+  },
+  {
+   "id": "mwagirbmlt820",
+   "band": "Gojira",
+   "eventId": "mwagigvsgum88",
+   "photo": "mwagirbgyyfz3",
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "mwagizc5aebxy",
+   "band": "Machine Head",
+   "eventId": "mwagigvsgum88",
+   "photo": "mwagizbyl6ipp",
+   "tour": "",
+   "headliner": false,
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-10T08:52:01.000Z"
+ "updatedAt": "2026-11-10T08:57:51.191Z"
 }

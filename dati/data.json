@@ -227,6 +227,19 @@
     "Massa"
    ],
    "notes": ""
+  },
+  {
+   "id": "mwail91mu6rjb",
+   "name": "Burn My Eyes 25° Anniversary Tour",
+   "festival": "",
+   "date": "2019-10-26",
+   "endDate": "",
+   "venue": "Hall",
+   "city": "Trezzo sull'Adda",
+   "companions": [
+    "Erry"
+   ],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -503,7 +516,16 @@
    "tour": "",
    "headliner": false,
    "pending": false
+  },
+  {
+   "id": "mwail93g7ak1n",
+   "band": "Machine Head",
+   "eventId": "mwail91mu6rjb",
+   "photo": "mwail91odvlle",
+   "tour": "",
+   "headliner": false,
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-10T09:35:32.788Z"
+ "updatedAt": "2026-11-10T09:55:37.147Z"
 }

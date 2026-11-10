@@ -42,7 +42,7 @@
   },
   {
    "id": "mw9e41selml3d",
-   "name": "Tour 2013",
+   "name": "A Flash Flood of Colour World Tour",
    "date": "2013-01-13",
    "endDate": "",
    "venue": "Tempo Rock",
@@ -55,7 +55,7 @@
   },
   {
    "id": "mw9eayazsw8i2",
-   "name": "Tour 2015",
+   "name": "The Mindsweep Tour",
    "date": "2015-07-29",
    "endDate": "",
    "venue": "Rock Planet",
@@ -79,11 +79,11 @@
     "Bella"
    ],
    "notes": "",
-   "festival": "Slam Dunk 2023"
+   "festival": "Slam Dunk Festival Italy 2023"
   },
   {
    "id": "mw9eioi0qxxeq",
-   "name": "Tour 2025",
+   "name": "Mainland Europe Autumn 2025",
    "date": "2025-11-02",
    "endDate": "",
    "venue": "Alcatraz",
@@ -156,7 +156,7 @@
    "city": "Monte Urano",
    "companions": [],
    "notes": "",
-   "festival": "Bamboo Festival"
+   "festival": "Bambù Festival"
   },
   {
    "id": "mwadmzgirsaqz",
@@ -312,5 +312,5 @@
    "pending": false
   }
  ],
- "updatedAt": "2026-11-10T07:45:34.000Z"
+ "updatedAt": "2026-11-10T07:56:50.000Z"
 }

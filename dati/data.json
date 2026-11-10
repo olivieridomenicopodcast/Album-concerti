@@ -175,142 +175,184 @@
    "id": "mw9b4nwkl9xrx",
    "band": "Metallica",
    "eventId": "mw9b4nv878nnw",
-   "photo": "mw9b4nv9bpq0h"
+   "photo": "mw9b4nv9bpq0h",
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9b5uink9ip6",
    "band": "Lamb Of God",
    "eventId": "mw9b4nv878nnw",
    "photo": "mw9b5ui6z8ubn",
-   "pending": false
+   "pending": false,
+   "tour": "Wrath Tour",
+   "headliner": false
   },
   {
    "id": "mw9bbgorqt7i6",
    "band": "Mastodon",
    "eventId": "mw9b4nv878nnw",
-   "photo": "mw9bbgocrzqbn"
+   "photo": "mw9bbgocrzqbn",
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9c63vxtpfpw",
    "band": "Avenged Sevenfold",
    "eventId": "mw9c63uhwppr3",
    "photo": "mw9c63uirkrp9",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9csr1y4iij2",
    "band": "Rancore",
    "eventId": "mw9csr07py80c",
-   "photo": "mw9csr07rb8oc"
+   "photo": "mw9csr07rb8oc",
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9ctb5m80h5c",
    "band": "Miglio",
    "eventId": "mw9csr07py80c",
-   "photo": "mw9ctb5e2uc7d"
+   "photo": "mw9ctb5e2uc7d",
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9dy6r8m1av9",
    "band": "Ferretti",
    "eventId": "mw9csr07py80c",
    "photo": "mw9dy6pd8j6vf",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9e41ssmfimb",
    "band": "Enter Shikari",
    "eventId": "mw9e41selml3d",
-   "photo": "mw9e41sfoe5fp"
+   "photo": "mw9e41sfoe5fp",
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9e4zambljw9",
    "band": "Cancer Bats",
    "eventId": "mw9e41selml3d",
    "photo": "mw9e4zabonjyl",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9eayb7h4uga",
    "band": "Enter Shikari",
    "eventId": "mw9eayazsw8i2",
    "photo": "mw9eayb03q6jc",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9eey8u2f7jt",
    "band": "Enter Shikari",
    "eventId": "mw9eey8iuise8",
    "photo": "mw9eey8mgcz4i",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9eioignkmy7",
    "band": "Enter Shikari",
    "eventId": "mw9eioi0qxxeq",
    "photo": "mw9eioi1iqo25",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9ejhcaj7cip",
    "band": "DeathByRomy",
    "eventId": "mw9eioi0qxxeq",
    "photo": "mw9ejhbxf9xoj",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mw9erq5vwa4bc",
    "band": "Vasco Rossi",
    "eventId": "mw9erq47ke27u",
    "photo": "mw9erq49e1aan",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9f1amv08vfo",
    "band": "Trivium",
    "eventId": "mw9f1al0ny6im",
-   "photo": "mw9f1al1ghrhf"
+   "photo": "mw9f1al1ghrhf",
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9f1tcylbi9b",
    "band": "Bullet For My Valentine",
    "eventId": "mw9f1al0ny6im",
-   "photo": "mw9f1tcr0mwfd"
+   "photo": "mw9f1tcr0mwfd",
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mw9fj4s2eisod",
    "band": "Orbit Culture",
    "eventId": "mw9f1al0ny6im",
    "photo": "mw9fj4qt1l4jq",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": false
   },
   {
    "id": "mwadmzggk6tcj",
    "band": "Caparezza",
    "eventId": "mwadmzei2p9c3",
    "photo": "mwadmzeiqxf1z",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mwadmzghyrrdr",
    "band": "Caparezza",
    "eventId": "mwadmzgg1wq6o",
    "photo": "mwadmzggwm8l9",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mwadmzgim01er",
    "band": "Caparezza",
    "eventId": "mwadmzghsgww2",
    "photo": "mwadmzghz3rjw",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   },
   {
    "id": "mwadmzgl28foy",
    "band": "Caparezza",
    "eventId": "mwadmzgirsaqz",
    "photo": "mwadmzgizut77",
-   "pending": false
+   "pending": false,
+   "tour": "",
+   "headliner": true
   }
  ],
- "updatedAt": "2026-11-10T08:03:39.000Z"
+ "updatedAt": "2026-11-10T08:34:32.000Z"
 }

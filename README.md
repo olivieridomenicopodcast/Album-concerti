@@ -26,3 +26,6 @@ In basso a sinistra c'è il numero di build. **↻ Aggiornamenti** controlla se 
 
 ## Concerto e festival
 Ogni serata può avere un **nome concerto/tour** e/o un **festival** (basta uno dei due). Nell'Album e nella Collezione si può filtrare per serata, festival e tour; la Collezione ha anche la vista **☷ Per concerto**. In **Scopri → Pacchetti a caso** crei pacchetti di figurine pescate dall'album (band singole, concerti interi o festival interi).
+
+## Headliner e tour delle band di spalla
+Ogni figurina può avere un **tour proprio** (se la band, di spalla, in quella serata stava facendo un suo tour) e il flag **⭐ headliner**. I filtri "Tour" e "Headliner/Spalle" ne tengono conto.

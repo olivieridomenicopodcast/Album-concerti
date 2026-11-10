@@ -32,3 +32,6 @@ Ogni figurina può avere un **tour proprio** (se la band, di spalla, in quella s
 
 ## Locandine
 Ogni evento può avere una **locandina** (caricata da *Modifica* oppure con il link di un'immagine). Si vede nella scheda dell'evento e nella sezione **🖼 Locandine**, una bacheca dedicata (con l'opzione di mostrare anche gli eventi che ancora non ce l'hanno). Le locandine caricate viaggiano con Push/Pull in `dati/photos/`.
+
+## Link in sola lettura
+Aggiungendo `?view=1` all'indirizzo (es. `https://olivieridomenicopodcast.github.io/Album-concerti/?view=1`) l'app mostra l'album a chiunque leggendo `dati/data.json` e le foto dal repo: niente modifica, sync o inserimento, e non scrive nulla nel browser del visitatore.

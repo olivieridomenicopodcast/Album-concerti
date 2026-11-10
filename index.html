@@ -372,11 +372,16 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 .broken .pmiss{display:block}.broken img{display:none!important}
 .posterbox{max-width:420px;cursor:zoom-in;position:relative}.posterbox img{width:100%;height:auto;border-radius:6px;box-shadow:0 8px 20px #0008}
 .modal.poster{max-width:640px}.pbig img{width:100%;max-height:78vh;object-fit:contain;display:block;border-radius:8px;opacity:1}
+#vbadge{display:none;font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:2px 10px}
+html.viewer #vbadge{display:inline-block}
+html.viewer #bPull,html.viewer #bPush,html.viewer #bBulk,html.viewer #bAdd,html.viewer #nav a[data-n=sync],html.viewer #nav a[data-n=packs],
+html.viewer [data-a=edit],html.viewer [data-a=editev],html.viewer #eEdit,html.viewer #eAdd,html.viewer #bRen,html.viewer #bAdd2,html.viewer .edev,
+html.viewer .pcard.empty,html.viewer .edit-only,html.viewer #rpNew{display:none!important}
 </style>
 </head>
 <body>
 <header class="top" id="top">
-  <span class="logo">🎸 ALBUM CONCERTI</span>
+  <span class="logo">🎸 ALBUM CONCERTI</span><span id="vbadge" title="Stai guardando l'album in sola lettura">👁 sola lettura</span>
   <nav id="nav">
     <a href="#/album" data-n="album">📖 Album</a>
     <a href="#/collezione" data-n="collezione">▦ Collezione</a>
@@ -400,7 +405,11 @@ html[data-skin=vinile] .pg.cover::after{content:"";position:absolute;left:30%;ri
 <script>
 'use strict';
 /* ============ build ============ */
-const BUILD=11,BUILD_DATE='2026-11-10';
+const BUILD=12,BUILD_DATE='2026-11-10';
+
+/* ============ modalità sola lettura (?view=1) ============ */
+const VIEW=/[?&]view\b/.test(location.search);
+if(VIEW)document.documentElement.classList.add('viewer');
 
 /* ============ utilità ============ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -417,7 +426,7 @@ const evTitle=e=>e.name&&e.festival?`${e.name} @ ${e.festival}`:(e.name||e.festi
 const place=e=>uniq([e.venue,e.city].filter(Boolean)).join(' · ');
 const yearOf=e=>(e.date||'').slice(0,4);
 const jload=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
-const jsave=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Impossibile salvare in locale: '+e.message,'err')}};
+const jsave=(k,v)=>{if(VIEW&&(k==='ac_data'||k==='ac_cfg'))return;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Impossibile salvare in locale: '+e.message,'err')}};
 const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
 const grad=s=>{const h=hue(s);return `linear-gradient(145deg,hsl(${h} 55% 30%),hsl(${(h+50)%360} 60% 18%))`};
 const initials=s=>String(s).split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
@@ -425,7 +434,7 @@ const plural=(n,a,b)=>n===1?a:b;
 function toast(m,t=''){const d=document.createElement('div');d.textContent=m;if(t)d.className=t;$('#toast').appendChild(d);setTimeout(()=>d.remove(),t==='err'?6000:2800)}
 
 /* ============ stato & persistenza ============ */
-let DB=jload('ac_data',{events:[],stickers:[]});
+let DB=VIEW?{events:[],stickers:[]}:jload('ac_data',{events:[],stickers:[]});
 let CFG=Object.assign({owner:'olivieridomenicopodcast',repo:'Album-concerti',branch:'ccr-d6c8e450-is4c8a',token:'',lastCommit:'',dirty:false},jload('ac_cfg',{}));
 const F=Object.assign({q:'',sort:'date-desc',status:'',year:'',city:'',event:'',band:'',comp:'',festival:'',tour:'',role:'',view:'grid',bsort:'date-asc'},jload('ac_filters',{}));
 const saveCfg=()=>jsave('ac_cfg',CFG);
@@ -486,7 +495,7 @@ function burstFX(x,y,n=14,big=false){
 }
 const confetti=()=>burstFX(innerWidth/2,innerHeight*.4,70,true);
 
-function touch(){DB.updatedAt=new Date().toISOString();jsave('ac_data',DB);CFG.dirty=true;saveCfg();refreshDirty()}
+function touch(){if(VIEW)return;DB.updatedAt=new Date().toISOString();jsave('ac_data',DB);CFG.dirty=true;saveCfg();refreshDirty()}
 function refreshDirty(){$('#top').classList.toggle('dirty',!!CFG.dirty)}
 
 /* ============ foto: IndexedDB ============ */
@@ -495,7 +504,7 @@ const idb=(()=>{let db;
   const tx=(mode,fn)=>open().then(d=>new Promise((res,rej)=>{const t=d.transaction('photos',mode);const rq=fn(t.objectStore('photos'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)}));
   return{get:id=>tx('readonly',s=>s.get(id)),put:(id,b)=>tx('readwrite',s=>s.put(b,id)),del:id=>tx('readwrite',s=>s.delete(id)),keys:()=>tx('readonly',s=>s.getAllKeys())}})();
 const urls=new Map();
-async function photoURL(id){if(urls.has(id))return urls.get(id);const b=await idb.get(id).catch(()=>null);if(!b)return null;const u=URL.createObjectURL(b);urls.set(id,u);return u}
+async function photoURL(id){if(VIEW)return 'dati/photos/'+encodeURIComponent(id)+'.jpg';if(urls.has(id))return urls.get(id);const b=await idb.get(id).catch(()=>null);if(!b)return null;const u=URL.createObjectURL(b);urls.set(id,u);return u}
 function hydrate(root=document){$$('img[data-photo]',root).forEach(async img=>{const id=img.dataset.photo;if(urls.has(id)){img.src=urls.get(id);img.classList.add('ok');return}const u=await photoURL(id);if(u){img.onload=()=>img.classList.add('ok');img.src=u}})}
 async function resizeImage(file,max=1100){
   let src,w,h;
@@ -721,7 +730,7 @@ function renderPosters(){
   <p style="color:var(--mut);margin:0 0 10px">${withP.length} ${plural(withP.length,'locandina','locandine')} su ${live.length} eventi.</p>
   <div class="toolbar"><input type="search" id="pq" placeholder="🔍 Cerca evento, festival, città…" value="${esc(F.pq||'')}">
     <select id="pyear"><option value="">Tutti gli anni</option>${distinctSorted(live.map(yearOf)).reverse().map(y=>`<option ${F.pyear===y?'selected':''}>${y}</option>`).join('')}</select>
-    <label class="btn sm" style="cursor:pointer"><input type="checkbox" id="pshow" ${F.pshow?'checked':''} style="width:auto;margin-right:6px">Mostra anche gli eventi senza locandina</label></div>
+    <label class="btn sm edit-only" style="cursor:pointer"><input type="checkbox" id="pshow" ${F.pshow?'checked':''} style="width:auto;margin-right:6px">Mostra anche gli eventi senza locandina</label></div>
   <div class="wall" id="wall"></div>`;
   const draw=()=>{
     const q=norm(F.pq||'');
@@ -1582,7 +1591,13 @@ $('#bCheck').onclick=async()=>{
   }catch(e){btn.textContent='↻ Aggiornamenti';toast('Controllo non riuscito: '+e.message+' (funziona solo se l\'app è pubblicata online)','err')}
   btn.disabled=false;
 };
-refreshDirty();route();
+refreshDirty();
+if(VIEW){
+  if(/#\/(sync|packs)/.test(location.hash))location.hash='#/album';
+  $('#view').innerHTML='<div class="empty"><h2>Carico l\'album…</h2></div>';
+  fetch('dati/data.json?'+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(j=>{DB=j;route(true)})
+    .catch(e=>{$('#view').innerHTML='<div class="empty"><h2>Non riesco a caricare l\'album</h2><p>'+esc(e.message)+'</p></div>'});
+}else route();
 if(navigator.storage?.persist)navigator.storage.persist().catch(()=>{});
 </script>
 </body>

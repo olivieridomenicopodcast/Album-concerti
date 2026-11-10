@@ -86,6 +86,75 @@
     "Erika"
    ],
    "notes": ""
+  },
+  {
+   "id": "mw9erq47ke27u",
+   "name": "Europe Indoor",
+   "date": "2009-10-07",
+   "endDate": "",
+   "venue": "Vitrifrigo Arena",
+   "city": "Pesaro",
+   "companions": [
+    "Rodo",
+    "Maggie",
+    "Zika",
+    "Laura Maria Giuliani",
+    "Jacopo",
+    "Titti"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "mw9f1al0ny6im",
+   "name": "Poisoned Ascendancy Tour",
+   "date": "2025-02-17",
+   "endDate": "",
+   "venue": "Alcatraz",
+   "city": "Milano",
+   "companions": [
+    "Gale"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "mwadmzei2p9c3",
+   "name": "Il Sogno Eretico Tour",
+   "date": "2011-04-02",
+   "endDate": "",
+   "venue": "Velvet",
+   "city": "Rimini",
+   "companions": [],
+   "notes": ""
+  },
+  {
+   "id": "mwadmzgg1wq6o",
+   "name": "Prisoner 709 Tour",
+   "date": "2017-11-25",
+   "endDate": "",
+   "venue": "Unipol Arena",
+   "city": "Bologna",
+   "companions": [],
+   "notes": ""
+  },
+  {
+   "id": "mwadmzghsgww2",
+   "name": "Exuvia Estate Tour",
+   "date": "2022-08-10",
+   "endDate": "",
+   "venue": "Parco Fluviale Alex Langer",
+   "city": "Monte Urano",
+   "companions": [],
+   "notes": ""
+  },
+  {
+   "id": "mwadmzgirsaqz",
+   "name": "Orbit Orbit Tour",
+   "date": "2026-07-25",
+   "endDate": "",
+   "venue": "Arena della Regina",
+   "city": "Cattolica",
+   "companions": [],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -174,7 +243,61 @@
    "eventId": "mw9eioi0qxxeq",
    "photo": "mw9ejhbxf9xoj",
    "pending": false
+  },
+  {
+   "id": "mw9erq5vwa4bc",
+   "band": "Vasco Rossi",
+   "eventId": "mw9erq47ke27u",
+   "photo": "mw9erq49e1aan",
+   "pending": false
+  },
+  {
+   "id": "mw9f1amv08vfo",
+   "band": "Trivium",
+   "eventId": "mw9f1al0ny6im",
+   "photo": "mw9f1al1ghrhf"
+  },
+  {
+   "id": "mw9f1tcylbi9b",
+   "band": "Bullet For My Valentine",
+   "eventId": "mw9f1al0ny6im",
+   "photo": "mw9f1tcr0mwfd"
+  },
+  {
+   "id": "mw9fj4s2eisod",
+   "band": "Orbit Culture",
+   "eventId": "mw9f1al0ny6im",
+   "photo": "mw9fj4qt1l4jq",
+   "pending": false
+  },
+  {
+   "id": "mwadmzggk6tcj",
+   "band": "Caparezza",
+   "eventId": "mwadmzei2p9c3",
+   "photo": "mwadmzeiqxf1z",
+   "pending": false
+  },
+  {
+   "id": "mwadmzghyrrdr",
+   "band": "Caparezza",
+   "eventId": "mwadmzgg1wq6o",
+   "photo": "mwadmzggwm8l9",
+   "pending": false
+  },
+  {
+   "id": "mwadmzgim01er",
+   "band": "Caparezza",
+   "eventId": "mwadmzghsgww2",
+   "photo": "mwadmzghz3rjw",
+   "pending": false
+  },
+  {
+   "id": "mwadmzgl28foy",
+   "band": "Caparezza",
+   "eventId": "mwadmzgirsaqz",
+   "photo": "mwadmzgizut77",
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-09T15:14:24.921Z"
+ "updatedAt": "2026-11-10T07:37:25.147Z"
 }

@@ -264,6 +264,20 @@
     "Letizia"
    ],
    "notes": ""
+  },
+  {
+   "id": "mwak5tg06vicw",
+   "name": "Hydrograd Tour",
+   "festival": "",
+   "date": "2017-12-15",
+   "endDate": "",
+   "venue": "Alcatraz",
+   "city": "Milano",
+   "companions": [
+    "Erry",
+    "Alice"
+   ],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -599,7 +613,24 @@
    "tour": "",
    "headliner": false,
    "pending": false
+  },
+  {
+   "id": "mwak5tgy1m4ja",
+   "band": "Stone Sour",
+   "eventId": "mwak5tg06vicw",
+   "photo": "mwak5tg5os1oc",
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "mwak7fw232lx5",
+   "band": "The Pretty Reckless",
+   "eventId": "mwak5tg06vicw",
+   "photo": "mwak7fvufhrya",
+   "tour": "",
+   "headliner": false,
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-10T10:34:57.436Z"
+ "updatedAt": "2026-11-10T10:40:47.082Z"
 }

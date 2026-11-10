@@ -376,7 +376,7 @@
    "band": "Metallica",
    "eventId": "mwagigvsgum88",
    "photo": "mwagigvs7vc3p",
-   "tour": "Black Album Tour",
+   "tour": "",
    "headliner": true
   },
   {
@@ -392,10 +392,10 @@
    "band": "Machine Head",
    "eventId": "mwagigvsgum88",
    "photo": "mwagizbyl6ipp",
-   "tour": "",
+   "tour": "The Eighth Plague Tour",
    "headliner": false,
    "pending": false
   }
  ],
- "updatedAt": "2026-11-10T08:57:51.191Z"
+ "updatedAt": "2026-11-10T08:59:05.000Z"
 }

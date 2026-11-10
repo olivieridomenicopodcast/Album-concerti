@@ -211,7 +211,7 @@
    "eventId": "mw9csr07py80c",
    "photo": "mw9csr07rb8oc",
    "tour": "",
-   "headliner": false
+   "headliner": true
   },
   {
    "id": "mw9ctb5m80h5c",
@@ -354,5 +354,5 @@
    "headliner": true
   }
  ],
- "updatedAt": "2026-11-10T08:34:32.000Z"
+ "updatedAt": "2026-11-10T08:52:01.000Z"
 }

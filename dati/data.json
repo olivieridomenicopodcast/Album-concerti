@@ -186,6 +186,21 @@
     "Laura Maria Giuliani"
    ],
    "notes": ""
+  },
+  {
+   "id": "mwahgzdnv7hmu",
+   "name": "Metallica By Request",
+   "festival": "Sonisphere Festival",
+   "date": "2014-07-01",
+   "endDate": "",
+   "venue": "Ippodromo delle Capannelle",
+   "city": "Roma",
+   "companions": [
+    "Erry",
+    "Gale",
+    "Mastro"
+   ],
+   "notes": "Ho preso il plettro di Kirk!"
   }
  ],
  "stickers": [
@@ -395,7 +410,40 @@
    "tour": "The Eighth Plague Tour",
    "headliner": false,
    "pending": false
+  },
+  {
+   "id": "mwahgzffc4md3",
+   "band": "Metallica",
+   "eventId": "mwahgzdnv7hmu",
+   "photo": "mwahgzdo64eg0",
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "mwahhq039pryw",
+   "band": "Kvelertak",
+   "eventId": "mwahgzdnv7hmu",
+   "photo": "mwahhpzt0cx27",
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "mwahhxj3idcp2",
+   "band": "Volbeat",
+   "eventId": "mwahgzdnv7hmu",
+   "photo": "mwahhxivjstkq",
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "mwahi3i4oxkk6",
+   "band": "Alice In Chains",
+   "eventId": "mwahgzdnv7hmu",
+   "photo": "mwahi3hy0kisj",
+   "tour": "",
+   "headliner": false,
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-10T08:59:05.000Z"
+ "updatedAt": "2026-11-10T09:25:05.192Z"
 }

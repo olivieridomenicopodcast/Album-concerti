@@ -132,7 +132,9 @@
    "endDate": "",
    "venue": "Velvet",
    "city": "Rimini",
-   "companions": [],
+   "companions": [
+    "Berto"
+   ],
    "notes": "",
    "festival": ""
   },
@@ -154,7 +156,11 @@
    "endDate": "",
    "venue": "Parco Fluviale Alex Langer",
    "city": "Monte Urano",
-   "companions": [],
+   "companions": [
+    "Erika",
+    "Rodo",
+    "Ugo"
+   ],
    "notes": "",
    "festival": "Bambù Festival"
   },
@@ -165,7 +171,9 @@
    "endDate": "",
    "venue": "Arena della Regina",
    "city": "Cattolica",
-   "companions": [],
+   "companions": [
+    "Erika"
+   ],
    "notes": "",
    "festival": ""
   },
@@ -293,6 +301,45 @@
     "Danilo"
    ],
    "notes": ""
+  },
+  {
+   "id": "m1a1c527cbbc3q",
+   "name": "Full Circle Tour",
+   "date": "2019-02-16",
+   "endDate": "",
+   "venue": "Rock Planet",
+   "city": "Pinarella di Cervia",
+   "companions": [
+    "Rodo",
+    "Bella",
+    "Erry",
+    "Chamber",
+    "Pascu"
+   ],
+   "notes": "",
+   "festival": ""
+  },
+  {
+   "id": "m1a1c527827bj3",
+   "name": "",
+   "date": "2017-06-25",
+   "endDate": "",
+   "venue": "Visarno Arena",
+   "city": "Firenze",
+   "companions": [],
+   "notes": "",
+   "festival": "Firenze Rocks 2017"
+  },
+  {
+   "id": "m1a1c527e67fk2",
+   "name": "No More Tours 2",
+   "date": "2018-06-17",
+   "endDate": "",
+   "venue": "Visarno Arena",
+   "city": "Firenze",
+   "companions": [],
+   "notes": "",
+   "festival": "Firenze Rocks 2018"
   }
  ],
  "stickers": [
@@ -662,7 +709,79 @@
    "tour": "",
    "headliner": false,
    "pending": false
+  },
+  {
+   "id": "m1a1c5277e4dzw",
+   "band": "P.O.D.",
+   "eventId": "m1a1c527cbbc3q",
+   "photo": null,
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "m1a1c5285489p0",
+   "band": "Alien Ant Farm",
+   "eventId": "m1a1c527cbbc3q",
+   "photo": null,
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "m1a1c52858d66a",
+   "band": "'68",
+   "eventId": "m1a1c527cbbc3q",
+   "photo": null,
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "m1a1c5288769hq",
+   "band": "System of a Down",
+   "eventId": "m1a1c527827bj3",
+   "photo": null,
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "m1a1c528a00dsz",
+   "band": "Prophets of Rage",
+   "eventId": "m1a1c527827bj3",
+   "photo": null,
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "m1a1c528270113",
+   "band": "Ozzy Osbourne",
+   "eventId": "m1a1c527e67fk2",
+   "photo": null,
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "m1a1c5281a67e2",
+   "band": "Avenged Sevenfold",
+   "eventId": "m1a1c527e67fk2",
+   "photo": null,
+   "tour": "",
+   "headliner": false
+  },
+  {
+   "id": "m1a1c5281406yc",
+   "band": "Judas Priest",
+   "eventId": "m1a1c527e67fk2",
+   "photo": null,
+   "tour": "Firepower World Tour",
+   "headliner": false
+  },
+  {
+   "id": "m1a1c528a026xc",
+   "band": "Tremonti",
+   "eventId": "m1a1c527e67fk2",
+   "photo": null,
+   "tour": "",
+   "headliner": false
   }
  ],
- "updatedAt": "2026-11-10T10:48:58.565Z"
+ "updatedAt": "2026-11-10T11:10:42.000Z"
 }

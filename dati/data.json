@@ -201,6 +201,32 @@
     "Mastro"
    ],
    "notes": "Ho preso il plettro di Kirk!"
+  },
+  {
+   "id": "mwahqztrzt9hu",
+   "name": "WorldWired Tour",
+   "festival": "",
+   "date": "2018-02-12",
+   "endDate": "",
+   "venue": "Unipol Arena",
+   "city": "Bologna",
+   "companions": [
+    "Erry"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "mwahv1exe2yb6",
+   "name": "M72 World Tour",
+   "festival": "",
+   "date": "2026-06-03",
+   "endDate": "",
+   "venue": "Stadio Dall'Ara",
+   "city": "Bologna",
+   "companions": [
+    "Massa"
+   ],
+   "notes": ""
   }
  ],
  "stickers": [
@@ -443,7 +469,41 @@
    "tour": "",
    "headliner": false,
    "pending": false
+  },
+  {
+   "id": "mwahqzu4uckwk",
+   "band": "Metallica",
+   "eventId": "mwahqztrzt9hu",
+   "photo": "mwahqzts91w4d",
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "mwaht0imqcook",
+   "band": "Kvelertak",
+   "eventId": "mwahqztrzt9hu",
+   "photo": "mwaht0hop7glk",
+   "tour": "",
+   "headliner": false,
+   "pending": false
+  },
+  {
+   "id": "mwahv1feo3w2r",
+   "band": "Metallica",
+   "eventId": "mwahv1exe2yb6",
+   "photo": "mwahv1f09vkk1",
+   "tour": "",
+   "headliner": true
+  },
+  {
+   "id": "mwahvjnst0ji4",
+   "band": "Gojira",
+   "eventId": "mwahv1exe2yb6",
+   "photo": "mwahvjnmvnt1q",
+   "tour": "",
+   "headliner": false,
+   "pending": false
   }
  ],
- "updatedAt": "2026-11-10T09:25:05.192Z"
+ "updatedAt": "2026-11-10T09:35:32.788Z"
 }
